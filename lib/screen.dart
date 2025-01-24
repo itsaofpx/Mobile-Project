@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'navbar.dart';
-import 'list.dart';
 import 'home.dart';
-import 'color.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,8 +20,12 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const Home(),
-    const ListScreen(),
-    const LuckyColor(),
+    const Center(
+      child: Text('1'),
+    ),
+    const Center(
+      child: Text('2'),
+    ),
   ];
 
   @override

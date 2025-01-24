@@ -14,12 +14,14 @@ class BottomNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Wish List"),
-        BottomNavigationBarItem(icon: Icon(Icons.card_giftcard), label: "LUCKY COLOR"),
+        BottomNavigationBarItem(icon: Icon(Icons.sports_soccer_sharp), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.card_membership), label: "My Ticket"),
+        BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: "Account"),
       ],
+      backgroundColor: Colors.white,
       currentIndex: currentIndex,
-      selectedItemColor: const Color.fromARGB(255, 0, 36, 93),
+      selectedItemColor: const Color.fromARGB(255, 219, 12, 12),
+      unselectedItemColor: const Color.fromARGB(255, 122, 122, 122),
       onTap: onTap,
     );
   }
