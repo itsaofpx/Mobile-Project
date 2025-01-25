@@ -32,7 +32,7 @@ class Home extends StatelessWidget {
               ),
 
               Positioned(
-                  top: 100,
+                  top: 70,
                   left: 30,
                   child: Container(
                     alignment: Alignment.centerLeft,
@@ -57,7 +57,7 @@ class Home extends StatelessWidget {
                   )),
 
               Positioned(
-                top: 100, // ระยะห่างจากด้านบน
+                top: 70, // ระยะห่างจากด้านบน
                 right: 30, // ระยะห่างจากด้านขวา
                 child: Container(
                   width: 40, // ขนาดของวงกลม
@@ -89,7 +89,7 @@ class Home extends StatelessWidget {
                   )),
               // Positioned สำหรับข้อความ "Hi, Goodmorning"
               const Positioned(
-                top: 180, // ระยะห่างจากด้านบน
+                top: 160, // ระยะห่างจากด้านบน
                 left: 20, // ระยะห่างจากด้านซ้าย
                 child: Text(
                   'Hi, Goodmorning!',
@@ -110,7 +110,7 @@ class Home extends StatelessWidget {
 
               // Positioned สำหรับข้อความเพิ่มเติม
               const Positioned(
-                top: 230, // ระยะห่างจากด้านบน
+                top: 210, // ระยะห่างจากด้านบน
                 left: 20, // ระยะห่างจากด้านซ้าย
                 child: Text(
                   'Welcome to your day!',
