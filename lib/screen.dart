@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'navbar.dart';
 import 'home.dart';
+import 'ticket.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -20,9 +21,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const Home(),
-    const Center(
-      child: Text('1'),
-    ),
+    const Ticket(),
     const Center(
       child: Text('2'),
     ),

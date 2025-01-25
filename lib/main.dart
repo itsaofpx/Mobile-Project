@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
       // theme: ThemeData(fontFamily: "poppins"),
       home: const MainScreen(),
       initialRoute: '/',
+      
       routes: {
         '/home': (context) => const MainScreen(),
       },
