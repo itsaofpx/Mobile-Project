@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:layout/Auth/sign_up.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -84,14 +85,29 @@ class _LoginPageState extends State<LoginPage> {
                       foregroundColor: Colors.white,
                     ),
                     onPressed: () async {
-                      String? validationError = _validateInputs();
+                      String? validationError;
+                      if (email.isEmpty || password.isEmpty) {
+                        validationError = "All fields are required.";
+                      }
                       if (validationError != null) {
-                        _showAlert(context, "Error", validationError);
+                        _showAlert(
+                            context, "Error", "Please fill in all required fields!");
                       } else {
-                        _showSuccessSnackBar(context, "Login successful!");
+                        bool isValidUser = false;
+                        for (var u in user) {
+                          if (u['email'] == email &&
+                              u['password'] == password) {
+                            isValidUser = true;
+                            break;
+                          }
+                        }
 
-                        if (mounted) {
-                          Navigator.pushNamed(context, '/home');
+                        if (isValidUser) {
+                          _showSuccessSnackBar(context, "Login successful!");
+                          Navigator.pushNamed(context, '/home', arguments: email);
+                        } else {
+                          _showAlert(
+                              context, "Error", "Invalid email or password.");
                         }
                       }
                     },
@@ -162,17 +178,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  String? _validateInputs() {
-    if (email.isEmpty || password.isEmpty) {
-      return "All fields are required.";
-    } else if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}").hasMatch(email)) {
-      return "Invalid Email";
-    } else if (password.length < 8) {
-      return "Invalid Password";
-    }
-    return null;
-  }
-
   void _showSuccessSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -183,7 +188,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _showAlert(BuildContext context, String title, String message) async {
+  Future<void> _showAlert(
+      BuildContext context, String title, String message) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {

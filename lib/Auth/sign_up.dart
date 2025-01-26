@@ -99,6 +99,12 @@ class _SignUpState extends State<SignUp> {
                       if (validationError != null) {
                         _showAlert(context, "Error", validationError);
                       } else {
+                        user.add({
+                          'name': name,
+                          'email': email,
+                          'password': password,
+                        });
+                        debugPrint('Number of users in list: ${user.length}');
                         _showSuccessSnackBar(context, "Account created successfully!");
                         if (mounted) {
                           Navigator.pushNamed(context, '/home');
@@ -217,3 +223,24 @@ void _showSuccessSnackBar(BuildContext context, String message) {
     ),
   );
 }
+
+List<Map> user = [
+  {
+    'name': 'aofpx',
+    'email': 'podjanin.w@ku.th',
+    'password': '12345678',
+    'picture': '',
+  },
+  {
+    'name': 'test',
+    'email': '1',
+    'password': '1',
+    'picture': '',
+  },
+  {
+    'name': 'aeuro',
+    'email': 'tibet.c@ku.th',
+    'password': '12345678',
+    'picture': '',
+  },
+];
