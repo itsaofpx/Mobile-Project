@@ -7,7 +7,8 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    final email = ModalRoute.of(context)?.settings.arguments as String?;
+    bool isLogin = email != null;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -20,13 +21,13 @@ class Home extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 height: 500, // ความสูงของ container
                 decoration: const BoxDecoration(
-                  // borderRadius: BorderRadius.only(
-                  //   bottomLeft: Radius.circular(25),
-                  //   bottomRight: Radius.circular(25),
-                  // ),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/red2.jpg'),
-                    fit: BoxFit.fill,
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromRGBO(255, 0, 0, 1),
+                      Color.fromRGBO(50, 0, 0, 0.8)
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
               ),
@@ -62,17 +63,18 @@ class Home extends StatelessWidget {
                 child: Container(
                   width: 40, // ขนาดของวงกลม
                   height: 40, // ขนาดของวงกลม
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle, // ทำให้ container เป็นวงกลม
                     image: DecorationImage(
-                      image: AssetImage(
-                          'assets/images/profile.png'), // เปลี่ยนเป็น path รูปที่คุณต้องการ
-                      fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่วงกลม
-                    ),
+                        image: AssetImage(isLogin 
+                            ? 'assets/images/user.png'
+                            : 'assets/images/profile.png'),
+                    fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่วงกลม
                   ),
                 ),
               ),
-              
+              ),
+
               Positioned(
                   top: 450,
                   left: 0,
@@ -154,25 +156,27 @@ class Home extends StatelessWidget {
               height: 100,
               margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
               // color: Colors.amber,
-              child: const Row(
+              child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                            onPressed: null,
-                            icon: Icon(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/matchdetail');
+                            },
+                            icon: const Icon(
                               Icons.stadium_rounded,
                               size: 30,
                             )),
-                        Text(
+                        const Text(
                           'Match Day',
                           style: TextStyle(fontSize: 10),
                         ),
                       ],
                     ),
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
@@ -187,7 +191,7 @@ class Home extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
@@ -202,7 +206,7 @@ class Home extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
@@ -241,7 +245,7 @@ class MyCard extends StatelessWidget {
             image: DecorationImage(
               image: AssetImage(item.imagePath),
               fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่ทั้งหมด
-            ),            
+            ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,

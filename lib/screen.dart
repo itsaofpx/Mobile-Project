@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:layout/account.dart';
 import 'navbar.dart';
 import 'home.dart';
 import 'ticket.dart';
@@ -22,12 +23,11 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const Home(),
     const Ticket(),
-    const Center(
-      child: Text('2'),
-    ),
+    const Account()
   ];
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_selectedIndex],

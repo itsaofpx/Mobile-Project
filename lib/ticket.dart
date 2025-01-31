@@ -65,7 +65,7 @@ class TicketCard extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF4285F4), Color.fromARGB(255, 28, 70, 160)],
+                  colors: [Color.fromARGB(255, 244, 66, 66), Color.fromARGB(255, 160, 28, 28)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -145,7 +145,7 @@ class TicketCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(month,style: const TextStyle(fontWeight: FontWeight.bold,)),
-                      Text(day,style: const TextStyle(fontSize: 40,fontWeight: FontWeight.bold,color: Color.fromARGB(255, 0, 68, 204))),
+                      Text(day,style: const TextStyle(fontSize: 40,fontWeight: FontWeight.bold,color: Color.fromARGB(255, 204, 0, 0))),
                       Text(year,style: const TextStyle(fontWeight: FontWeight.bold,)),
                     ],
                   ),
