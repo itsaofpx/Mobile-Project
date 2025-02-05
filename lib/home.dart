@@ -176,16 +176,18 @@ class Home extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Column(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                            onPressed: null,
-                            icon: Icon(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/community');
+                            },
+                            icon: const Icon(
                               Icons.people_alt,
                               size: 30,
                             )),
-                        Text(
+                        const Text(
                           'Community',
                           style: TextStyle(fontSize: 10),
                         ),

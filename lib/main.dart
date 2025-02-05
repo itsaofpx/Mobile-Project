@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:layout/Auth/login.dart';
 import 'package:layout/Auth/sign_up.dart';
+import 'package:layout/Community/team.dart';
+import 'package:layout/Community/team_community.dart';
 import 'package:layout/MatchDay/matchdetail.dart';
 import 'screen.dart';
 
@@ -24,6 +26,8 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUp(),
         '/login': (context) => const LoginPage(),
         '/matchdetail': (context) => const MatchDetail(),
+        '/community' : (context) => const Team(),
+        '/teamcommunity': (context) => const TeamCommunity()
       },
     );
   }
