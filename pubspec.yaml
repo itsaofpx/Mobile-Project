@@ -12,6 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   intl: ^0.18.0
   dotted_border: ^2.1.0
+  shared_preferences: ^2.2.2
 
 
 dev_dependencies:
@@ -26,3 +27,4 @@ flutter:
     - assets/images/
     - assets/news/
     - assets/staduim/
+    - assets/teams/

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:layout/data/user.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -224,23 +225,3 @@ void _showSuccessSnackBar(BuildContext context, String message) {
   );
 }
 
-List<Map> user = [
-  {
-    'name': 'aofpx',
-    'email': 'podjanin.w@ku.th',
-    'password': '12345678',
-    'picture': '',
-  },
-  {
-    'name': 'test',
-    'email': '1',
-    'password': '1',
-    'picture': '',
-  },
-  {
-    'name': 'aeuro',
-    'email': 'tibet.c@ku.th',
-    'password': '12345678',
-    'picture': '',
-  },
-];
