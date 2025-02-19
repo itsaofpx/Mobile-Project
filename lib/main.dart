@@ -3,7 +3,9 @@ import 'package:layout/Auth/login.dart';
 import 'package:layout/Auth/sign_up.dart';
 import 'package:layout/Community/team.dart';
 import 'package:layout/Community/team_community.dart';
-import 'package:layout/MatchDay/matchdetail.dart';
+import 'package:layout/MatchDay/listmatch.dart';
+import 'package:layout/News/newslist.dart';
+
 import 'screen.dart';
 
 void main() {
@@ -25,9 +27,10 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const MainScreen(),
         '/signup': (context) => const SignUp(),
         '/login': (context) => const LoginPage(),
-        '/matchdetail': (context) => const MatchDetail(),
+        '/matchlist': (context) => MatchListScreen(),
         '/community' : (context) => const Team(),
-        '/teamcommunity': (context) => const TeamCommunity()
+        '/teamcommunity': (context) => const TeamCommunity(),
+        '/newslist': (context) => const NewsListPage(),
       },
     );
   }

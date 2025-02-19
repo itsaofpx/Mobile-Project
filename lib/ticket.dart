@@ -3,7 +3,6 @@ import 'model/ticket_model.dart';
 import 'tools/dot.dart';
 import 'tools/dayformat.dart';
 
-
 class Ticket extends StatelessWidget {
   const Ticket({super.key});
 
@@ -45,10 +44,11 @@ class TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      List<String> dateList = splitDate(ticket.date);  // เรียกใช้ฟังก์ชัน splitDate
-      String month = dateList[0];  // "January"
-      String day = dateList[1];    // "25"
-      String year = dateList[2];   // "2025"
+    List<String> dateList =
+        splitDate(ticket.date);
+    String month = dateList[0];
+    String day = dateList[1];
+    String year = dateList[2];
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -58,14 +58,14 @@ class TicketCard extends StatelessWidget {
       elevation: 2,
       child: Row(
         children: [
-          // Left Section
+        
           Expanded(
             flex: 4,
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 244, 66, 66), Color.fromARGB(255, 160, 28, 28)],
+                  colors: [Color(0xFF3562A6), Color(0xFF6594C0)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -121,20 +121,20 @@ class TicketCard extends StatelessWidget {
             ),
           ),
 
-          // Stack to position the Circle and QR Code
+        
           Stack(
             alignment: Alignment.center,
             clipBehavior: Clip.none,
             children: [
-              // Right Section - QR Code Container
+            
               Container(
-                width: 100, // Size of the QR Code Container
-                height: 100, // Size of the QR Code Container
+                width: 100,
+                height: 100,
                 decoration: const BoxDecoration(
-                  // image: DecorationImage(
-                  //   image: AssetImage('assets/images/1.png'),
-                  //   fit: BoxFit.cover,
-                  // ),
+                
+                
+                
+                
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(16),
                     bottomRight: Radius.circular(16),
@@ -144,20 +144,31 @@ class TicketCard extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(month,style: const TextStyle(fontWeight: FontWeight.bold,)),
-                      Text(day,style: const TextStyle(fontSize: 40,fontWeight: FontWeight.bold,color: Color.fromARGB(255, 204, 0, 0))),
-                      Text(year,style: const TextStyle(fontWeight: FontWeight.bold,)),
+                      Text(month,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          )),
+                      Text(day,
+                          style: const TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF091442),
+                          )),
+                      Text(year,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          )),
                     ],
                   ),
                 ),
               ),
-              // White Circle in the middle
+            
               Positioned(
                 left: -8,
                 top: -35,
                 child: Container(
-                  width: 17, // Size of the circle
-                  height: 17, // Size of the circle
+                  width: 17,
+                  height: 17,
                   decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 255, 255, 255),
                     shape: BoxShape.circle,
@@ -168,21 +179,22 @@ class TicketCard extends StatelessWidget {
                 left: -8,
                 top: 120,
                 child: Container(
-                  width: 17, // Size of the circle
-                  height: 17, // Size of the circle
+                  width: 17,
+                  height: 17,
                   decoration: const BoxDecoration(
-                    color:Color.fromARGB(255, 255, 255, 255),
+                    color: Color.fromARGB(255, 255, 255, 255),
                     shape: BoxShape.circle,
                   ),
                 ),
               ),
-              // Dotted Vertical Line
+            
               Positioned(
-                left: 1, // Center position horizontally in the container
+                left: 1,
                 top: -18,
                 bottom: 0,
                 child: CustomPaint(
-                  size: const Size(2, 100), // Width of line, height as the container's height
+                  size: const Size(2,
+                      100),
                   painter: DottedLinePainter(),
                 ),
               ),
@@ -193,4 +205,3 @@ class TicketCard extends StatelessWidget {
     );
   }
 }
-

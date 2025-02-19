@@ -10,11 +10,11 @@
 		</data>
 		<key>flutter_assets/AssetManifest.bin</key>
 		<data>
-		9W7PbmF5Pgwn9nzZfEQ1MOeHRxI=
+		yObSpRGsQE7nryQyEfMYjjabDCQ=
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		JoT1UqBELF7FrdqFDikkzXlu6Pg=
+		MwKwDS/esOCt10WVeA0R8P+Q6SI=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		JOOiz4dK+DlRL5Qqudpd9xpFegM=
+		QTVJ7E9W8RVtrvs2MCNSXGmgToQ=
 		</data>
 		<key>flutter_assets/assets/images/.DS_Store</key>
 		<data>
@@ -66,7 +66,7 @@
 		</data>
 		<key>flutter_assets/assets/staduim/.DS_Store</key>
 		<data>
-		ae+xjCTZgBFNdlceNZ9XgJwGKFY=
+		7gEFemVe+xDMCZ09RxQUjlLYJAI=
 		</data>
 		<key>flutter_assets/assets/staduim/S1.png</key>
 		<data>
@@ -75,6 +75,46 @@
 		<key>flutter_assets/assets/staduim/S2.png</key>
 		<data>
 		9cllbpraCVTlkLGj/kDoFOHjwKY=
+		</data>
+		<key>flutter_assets/assets/teams/Arsenal.png</key>
+		<data>
+		amKLH1bkvFbIj4Y0/dhylBtFmpA=
+		</data>
+		<key>flutter_assets/assets/teams/AtleticoMadrid.png</key>
+		<data>
+		smOyfaBgKqpsAldzdsSTU/i7Cl4=
+		</data>
+		<key>flutter_assets/assets/teams/Barcelona.png</key>
+		<data>
+		U1gizPiRQVJZgtum3qLGjXDsGz8=
+		</data>
+		<key>flutter_assets/assets/teams/BayernMunich.png</key>
+		<data>
+		Bc0uOvYs3MhF5RSBSprDJX5AkUE=
+		</data>
+		<key>flutter_assets/assets/teams/Chelsea.png</key>
+		<data>
+		IF7GWzySeXFaqchbZmOEAtD76NM=
+		</data>
+		<key>flutter_assets/assets/teams/InterMilan.png</key>
+		<data>
+		j167eAtapGT09By0WSvaU0gCWRk=
+		</data>
+		<key>flutter_assets/assets/teams/Liverpool.png</key>
+		<data>
+		rzE3HkLejd0Fb82stZiDLRnRv1A=
+		</data>
+		<key>flutter_assets/assets/teams/ManUtd.png</key>
+		<data>
+		P62j4iFn3FWyVWsDpod2G39M0AI=
+		</data>
+		<key>flutter_assets/assets/teams/ManchesterCity.png</key>
+		<data>
+		xy+xbywGVysnjdeghvfMtjBhDZw=
+		</data>
+		<key>flutter_assets/assets/teams/RealMadrid.png</key>
+		<data>
+		sio5eQjgcMjtXZUeQsrxuCdcyyA=
 		</data>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<data>
@@ -86,7 +126,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		7UxWmjCCyHQng0JwhtBhOw+d1jE=
+		2HrTysujkzebbjpuxsYGK4ac4r4=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -107,14 +147,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			YvGon0R4DJEjYTgu4+wBiJQLeumtBQoNnRPXdUtcdXI=
+			te9DtpXFuoqGztgMq+oIT8Qt9OFvUZhNGaLk2SNKzCY=
 			</data>
 		</dict>
 		<key>flutter_assets/AssetManifest.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			YR3VNeYxUxnvWFn639+kBDCgSZC1AXhyn59kduMnPxs=
+			wgBHd4MNHpp30cAZDmabWSjbvdQLuWmz0/rL9kMFsW8=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -128,7 +168,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ZUCObbkk99VqSYzHKedTfNOMCOUPqxXl/nHmqcEn7AM=
+			m40mlQXe6ihgKt2UB2xFUaJaGN/RUaPfmfMxecYOHEs=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/images/1.png</key>
@@ -208,6 +248,76 @@
 			UssRaOnJb3m7h8DaRrhl7C9bey7f7WcifPtweo6KIyI=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/teams/Arsenal.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Z0hsULhfxojoTCotaZ7iJfcnmU4NltT6g2vx8exrezU=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/AtleticoMadrid.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2t3+69lU0tC7/ZY9T3VtrtOBVp5aTYgVteNktIOkYIg=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/Barcelona.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			72fDV9STNDZtfnQrhfMAbrL+0MzXoG7LRQl31HnF2AA=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/BayernMunich.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EP0mGxsSi5a9kSWLRYxN/hydGX/Q/L/Blul3pRadvEU=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/Chelsea.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3fak67FroJT00oA1pQ3Rsk9pNOciXiQSCENAnkf/BWY=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/InterMilan.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			UIhVcCMRPP7v+/s/INHMC2UJVZco7msw8LC7oE4QzC8=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/Liverpool.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			h++DZbTmo882gs64Y/a6Xad3o83DZljqPEPQXioMM/8=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/ManUtd.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ik21eWB0fHxhSTLtgZkqjUWrodohTs3Z/WKBDB+H5Ig=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/ManchesterCity.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			sNBs6E4/T1rX/IDR5PAFFHtAc3mN7wq/zFmtQYIWddY=
+			</data>
+		</dict>
+		<key>flutter_assets/assets/teams/RealMadrid.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			qTwua1KO6IJ9SJYtmYO969U8E+Xbs+c3rkGxgQ/ieno=
+			</data>
+		</dict>
 		<key>flutter_assets/fonts/MaterialIcons-Regular.otf</key>
 		<dict>
 			<key>hash2</key>
@@ -226,7 +336,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+MVhWrlcgBxD/kpPFby/nout10tXWb8dLsiMLuJFhBo=
+			NC5SifvSrfaViCQo8Gk7Y6OlRv1Tv+Q3yH7609g34r0=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

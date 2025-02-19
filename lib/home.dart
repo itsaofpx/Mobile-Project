@@ -14,17 +14,17 @@ class Home extends StatelessWidget {
       body: Column(
         children: [
           Stack(
-            clipBehavior: Clip.none, // อนุญาตให้วัตถุยื่นออกนอก Stack
+            clipBehavior: Clip.none, 
             children: [
-              // Container สำหรับภาพพื้นหลัง
+              
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: 500, // ความสูงของ container
+                height: 500, 
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color.fromRGBO(255, 0, 0, 1),
-                      Color.fromRGBO(50, 0, 0, 0.8)
+                      Color(0xFF091442),
+                      Color(0xFF6594C0),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -39,7 +39,7 @@ class Home extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     width: 450,
                     height: 50,
-                    // color: Colors.green,
+                    
                     child: Text(
                       'Today is ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
                       style: const TextStyle(
@@ -58,18 +58,18 @@ class Home extends StatelessWidget {
                   )),
 
               Positioned(
-                top: 70, // ระยะห่างจากด้านบน
-                right: 30, // ระยะห่างจากด้านขวา
+                top: 70, 
+                right: 30, 
                 child: Container(
-                  width: 40, // ขนาดของวงกลม
-                  height: 40, // ขนาดของวงกลม
+                  width: 40, 
+                  height: 40, 
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle, // ทำให้ container เป็นวงกลม
+                    shape: BoxShape.circle, 
                     image: DecorationImage(
                         image: AssetImage(isLogin 
                             ? 'assets/images/user.png'
                             : 'assets/images/profile.png'),
-                    fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่วงกลม
+                    fit: BoxFit.cover, 
                   ),
                 ),
               ),
@@ -89,10 +89,10 @@ class Home extends StatelessWidget {
                       ),
                     ),
                   )),
-              // Positioned สำหรับข้อความ "Hi, Goodmorning"
+              
               const Positioned(
-                top: 160, // ระยะห่างจากด้านบน
-                left: 20, // ระยะห่างจากด้านซ้าย
+                top: 160, 
+                left: 20, 
                 child: Text(
                   'Hi, Goodmorning!',
                   style: TextStyle(
@@ -110,10 +110,10 @@ class Home extends StatelessWidget {
                 ),
               ),
 
-              // Positioned สำหรับข้อความเพิ่มเติม
+              
               const Positioned(
-                top: 210, // ระยะห่างจากด้านบน
-                left: 20, // ระยะห่างจากด้านซ้าย
+                top: 210, 
+                left: 20, 
                 child: Text(
                   'Welcome to your day!',
                   style: TextStyle(
@@ -130,19 +130,19 @@ class Home extends StatelessWidget {
                 ),
               ),
 
-              // Positioned สำหรับ ListView ที่ยื่นออกมา
+              
               Positioned(
-                top: 300, // ระยะห่างจากด้านบน
-                left: 0, // ระยะห่างจากด้านซ้าย
-                right: 0, // ระยะห่างจากด้านขวา
+                top: 300, 
+                left: 0, 
+                right: 0, 
                 child: SizedBox(
-                  height: 230, // กำหนดความสูงของ ListView
+                  height: 230, 
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       return MyCard(
-                          item: items[index]); // ส่งข้อมูล Item ไปที่ MyCard
+                          item: items[index]); 
                     },
                   ),
                 ),
@@ -155,7 +155,7 @@ class Home extends StatelessWidget {
           Container(
               height: 100,
               margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-              // color: Colors.amber,
+              
               child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -164,7 +164,7 @@ class Home extends StatelessWidget {
                       children: [
                         IconButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/matchdetail');
+                              Navigator.pushNamed(context, '/matchlist');
                             },
                             icon: const Icon(
                               Icons.stadium_rounded,
@@ -193,16 +193,18 @@ class Home extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Column(
+                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                            onPressed: null,
-                            icon: Icon(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/newslist');
+                            },
+                            icon:const Icon(
                               Icons.newspaper,
                               size: 30,
                             )),
-                        Text(
+                        const Text(
                           'News',
                           style: TextStyle(fontSize: 10),
                         ),
@@ -240,13 +242,13 @@ class MyCard extends StatelessWidget {
       children: [
         Container(
           width: 350,
-          height: 210, // กำหนดความสูงให้ชัดเจน
+          height: 210, 
           margin: const EdgeInsets.fromLTRB(20, 10, 10, 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
               image: AssetImage(item.imagePath),
-              fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่ทั้งหมด
+              fit: BoxFit.cover, 
             ),
           ),
           child: Column(
@@ -258,7 +260,7 @@ class MyCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ชื่อสินค้า
+                    
                     Text(
                       item.name,
                       style: const TextStyle(
@@ -267,9 +269,9 @@ class MyCard extends StatelessWidget {
                         color: Colors.white,
                         shadows: [
                           Shadow(
-                            color: Color.fromARGB(255, 59, 59, 59), // สีขอบ
-                            offset: Offset(1.0, 1.0), // กำหนดทิศทางของเงา (ขอบ)
-                            blurRadius: 3.0, // ขนาดของขอบ
+                            color: Color.fromARGB(255, 59, 59, 59), 
+                            offset: Offset(1.0, 1.0), 
+                            blurRadius: 3.0, 
                           ),
                         ],
                       ),
@@ -282,9 +284,9 @@ class MyCard extends StatelessWidget {
                         color: Colors.white,
                         shadows: [
                           Shadow(
-                            color: Color.fromARGB(255, 59, 59, 59), // สีขอบ
-                            offset: Offset(1.0, 1.0), // กำหนดทิศทางของเงา (ขอบ)
-                            blurRadius: 3.0, // ขนาดของขอบ
+                            color: Color.fromARGB(255, 59, 59, 59), 
+                            offset: Offset(1.0, 1.0), 
+                            blurRadius: 3.0, 
                           ),
                         ],
                       ),

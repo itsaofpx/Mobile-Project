@@ -21,7 +21,7 @@ class BottomNavbar extends StatelessWidget {
       ],
       backgroundColor: Colors.white,
       currentIndex: currentIndex,
-      selectedItemColor: const Color.fromARGB(255, 219, 12, 12),
+      selectedItemColor: const Color(0xFF091442),
       unselectedItemColor: const Color.fromARGB(255, 122, 122, 122),
       onTap: onTap,
     );

@@ -13,6 +13,11 @@ class _SignUpState extends State<SignUp> {
   String email = "";
   String password = "";
 
+  // static const Color darkBlue = Color(0xFF0E1E5B);
+  static const Color deeperBlue = Color(0xFF091442);
+  static const Color mediumBlue = Color(0xFF3562A6);
+  // static const Color lightBlue = Color(0xFF6594C0);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,131 +29,135 @@ class _SignUpState extends State<SignUp> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black,
-              Colors.red,
+              Color.fromARGB(255, 255, 255, 255),
+              Color.fromARGB(255, 242, 244, 255),
             ],
           ),
         ),
-        child: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Create Account",
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "Sign up to get started",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  _buildTextField(
-                    hintText: "Name",
-                    icon: Icons.person,
-                    onChanged: (value) {
-                      setState(() {
-                        name = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  _buildTextField(
-                    hintText: "Email",
-                    icon: Icons.email,
-                    onChanged: (value) {
-                      setState(() {
-                        email = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  _buildTextField(
-                    hintText: "Password",
-                    icon: Icons.lock,
-                    obscureText: true,
-                    onChanged: (value) {
-                      setState(() {
-                        password = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      backgroundColor: Colors.red.shade900,
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () async {
-                      String? validationError = _validateInputs();
-                      if (validationError != null) {
-                        _showAlert(context, "Error", validationError);
-                      } else {
-                        user.add({
-                          'name': name,
-                          'email': email,
-                          'password': password,
-                        });
-                        debugPrint('Number of users in list: ${user.length}');
-                        _showSuccessSnackBar(context, "Account created successfully!");
-                        if (mounted) {
-                          Navigator.pushNamed(context, '/home');
-                        }
-                      }
-                    },
-                    child: const Text(
-                      "Sign Up",
+        child: Center(
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 80),
+                    const Text(
+                      "Create Account",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 32,
                         fontWeight: FontWeight.bold,
+                        color: deeperBlue,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Already have an account? ",
-                        style: TextStyle(color: Colors.white70),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Sign up to get started",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: mediumBlue,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/login');
-                        },
-                        child: const Text(
-                          "Log In",
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    ),
+                    const SizedBox(height: 40),
+                    _buildTextField(
+                      hintText: "Name",
+                      icon: Icons.person,
+                      onChanged: (value) {
+                        setState(() {
+                          name = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                      hintText: "Email",
+                      icon: Icons.email,
+                      onChanged: (value) {
+                        setState(() {
+                          email = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                      hintText: "Password",
+                      icon: Icons.lock,
+                      obscureText: true,
+                      onChanged: (value) {
+                        setState(() {
+                          password = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 40),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        backgroundColor: deeperBlue,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () => _handleSignUp(context),
+                      child: const Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Already have an account? ",
+                          style: TextStyle(color: mediumBlue),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          child:const  Text(
+                            "Log In",
+                            style: TextStyle(
+                              color: deeperBlue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _handleSignUp(BuildContext context) {
+    String? validationError = _validateInputs();
+    if (validationError != null) {
+      _showAlert(context, "Error", validationError);
+    } else {
+      user.add({
+        'name': name,
+        'email': email,
+        'password': password,
+      });
+      _showSuccessSnackBar(context, "Account created successfully!");
+      if (mounted) {
+        Navigator.pushNamed(context, '/login');
+      }
+    }
   }
 
   Widget _buildTextField({
@@ -160,20 +169,24 @@ class _SignUpState extends State<SignUp> {
     return TextField(
       onChanged: onChanged,
       obscureText: obscureText,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: deeperBlue),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: Colors.white,
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.white54),
-        prefixIcon: Icon(icon, color: Colors.white70),
+        hintStyle: TextStyle(color: mediumBlue.withOpacity(0.7)),
+        prefixIcon: Icon(icon, color: mediumBlue),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: mediumBlue.withOpacity(0.3)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(color: mediumBlue.withOpacity(0.3)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(color: Colors.red.shade900, width: 2),
+          borderSide: BorderSide(color: deeperBlue, width: 2),
         ),
       ),
     );
@@ -193,19 +206,33 @@ class _SignUpState extends State<SignUp> {
     return null;
   }
 
+  void _showSuccessSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: mediumBlue,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
   Future<void> _showAlert(
       BuildContext context, String title, String message) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
-          content: Text(message),
+          backgroundColor: Colors.white,
+          title: Text(title, style: const TextStyle(color: deeperBlue)),
+          content: Text(message, style: const TextStyle(color: mediumBlue)),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
+              style: TextButton.styleFrom(
+                foregroundColor: deeperBlue,
+              ),
               child: const Text("OK"),
             ),
           ],
@@ -214,14 +241,3 @@ class _SignUpState extends State<SignUp> {
     );
   }
 }
-
-void _showSuccessSnackBar(BuildContext context, String message) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.green, // Success color
-      duration: const Duration(seconds: 3), // Adjust duration as needed
-    ),
-  );
-}
-

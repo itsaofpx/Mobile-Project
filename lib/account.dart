@@ -9,7 +9,7 @@ class Account extends StatelessWidget {
 
     if (email != null) {
       return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: const Color(0xFF091442), // deeperBlue
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -32,13 +32,13 @@ class Account extends StatelessWidget {
                   ),
                 ),
                 background: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.red.shade900,
-                        Colors.black,
+                        Color(0xFF0E1E5B), // darkBlue
+                        Color(0xFF091442), // deeperBlue
                       ],
                     ),
                   ),
@@ -50,7 +50,7 @@ class Account extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: Colors.white,
+                              color: const Color(0xFF6594C0), // lightBlue
                               width: 4,
                             ),
                             boxShadow: [
@@ -63,7 +63,7 @@ class Account extends StatelessWidget {
                           ),
                           child: const CircleAvatar(
                             radius: 60,
-                            backgroundColor: Colors.white24,
+                            backgroundColor: Color(0xFF3562A6), // mediumBlue
                             child: Icon(
                               Icons.person,
                               color: Colors.white,
@@ -94,17 +94,17 @@ class Account extends StatelessWidget {
           ],
         ),
       );
-    }else {
+    } else {
       return Scaffold(
         body: Container(
           width: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black,
-                Colors.red.shade900,
+                Color(0xFF0E1E5B), // darkBlue
+                Color(0xFF6594C0), // lightBlue
               ],
             ),
           ),
@@ -112,12 +112,11 @@ class Account extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo or App Icon (Placeholder)
                 Container(
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: const Color(0xFF3562A6).withOpacity(0.2), // mediumBlue
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 2),
                   ),
@@ -152,8 +151,8 @@ class Account extends StatelessWidget {
                 ),
                 const SizedBox(height: 50),
                 _buildAuthButton(
-                  context, 
-                  text: 'Create Account', 
+                  context,
+                  text: 'Create Account',
                   onPressed: () {
                     Navigator.pushNamed(context, '/signup');
                   },
@@ -161,8 +160,8 @@ class Account extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 _buildAuthButton(
-                  context, 
-                  text: 'Login', 
+                  context,
+                  text: 'Login',
                   onPressed: () {
                     Navigator.pushNamed(context, '/login');
                   },
@@ -187,7 +186,7 @@ class Account extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary ? Colors.white : Colors.transparent,
-          foregroundColor: isPrimary ? Colors.red.shade900 : Colors.white,
+          foregroundColor: isPrimary ? const Color(0xFF0E1E5B) : Colors.white, // darkBlue
           side: BorderSide(color: Colors.white.withOpacity(0.7), width: 2),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(40),
@@ -202,7 +201,7 @@ class Account extends StatelessWidget {
             fontSize: 20,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.1,
-            color: isPrimary ? Colors.red.shade900 : Colors.white,
+            color: isPrimary ? const Color(0xFF0E1E5B) : Colors.white, // darkBlue
           ),
         ),
       ),
@@ -211,64 +210,64 @@ class Account extends StatelessWidget {
 }
 
 Widget _buildAccountSection(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+  return Container(
+    decoration: BoxDecoration(
+      color: const Color(0xFF3562A6).withOpacity(0.1), // mediumBlue
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(30),
+        topRight: Radius.circular(30),
+      ),
+    ),
+    child: Column(
+      children: [
+        const SizedBox(height: 20),
+        _buildAccountCard(
+          icon: Icons.person_outline,
+          title: 'Profile',
+          onTap: () {},
         ),
-      ),
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          _buildAccountCard(
-            icon: Icons.person_outline,
-            title: 'Profile',
-            onTap: () {},
-          ),
-          _buildAccountCard(
-            icon: Icons.history,
-            title: 'Booking History',
-            onTap: () {},
-          ),
-          _buildAccountCard(
-            icon: Icons.logout,
-            title: 'Logout',
-            onTap: () {
-              // Implement logout logic
-              Navigator.pushReplacementNamed(context, '/');
-            },
-            isLogout: true,
-          ),
-        ],
-      ),
-    );
-  }
-  Widget _buildAccountCard({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    bool isLogout = false,
-  }) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: isLogout ? Colors.red : Colors.white,
-        size: 28,
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: isLogout ? Colors.red : Colors.white,
-          fontSize: 18,
-          fontWeight: isLogout ? FontWeight.bold : FontWeight.normal,
+        _buildAccountCard(
+          icon: Icons.history,
+          title: 'Booking History',
+          onTap: () {},
         ),
+        _buildAccountCard(
+          icon: Icons.logout,
+          title: 'Logout',
+          onTap: () {
+            Navigator.pushReplacementNamed(context, '/');
+          },
+          isLogout: true,
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildAccountCard({
+  required IconData icon,
+  required String title,
+  required VoidCallback onTap,
+  bool isLogout = false,
+}) {
+  return ListTile(
+    leading: Icon(
+      icon,
+      color: isLogout ? const Color(0xFF6594C0) : Colors.white, // lightBlue for logout
+      size: 28,
+    ),
+    title: Text(
+      title,
+      style: TextStyle(
+        color: isLogout ? const Color(0xFF6594C0) : Colors.white, // lightBlue for logout
+        fontSize: 18,
+        fontWeight: isLogout ? FontWeight.bold : FontWeight.normal,
       ),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: isLogout ? Colors.red : Colors.white,
-      ),
-      onTap: onTap,
-    );
-  }
+    ),
+    trailing: Icon(
+      Icons.chevron_right,
+      color: isLogout ? const Color(0xFF6594C0) : Colors.white, // lightBlue for logout
+    ),
+    onTap: onTap,
+  );
+}

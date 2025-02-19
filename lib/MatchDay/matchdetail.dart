@@ -1,189 +1,357 @@
 import 'package:flutter/material.dart';
+import 'ticket_booking.dart';
 
 class MatchDetail extends StatefulWidget {
-  const MatchDetail({super.key});
+  final String matchId;
+  final String title;
+  final String leagueName;
+  final String matchDate;
+  final String matchTime;
+  final String stadiumName;
+  final String description;
+
+  const MatchDetail({
+    super.key,
+    required this.matchId,
+    required this.title,
+    required this.leagueName,
+    required this.matchDate,
+    required this.matchTime,
+    required this.stadiumName,
+    required this.description,
+  });
 
   @override
   _MatchDetailState createState() => _MatchDetailState();
 }
 
 class _MatchDetailState extends State<MatchDetail> {
-  // กำหนดตัวแปรเพื่อเก็บค่าจำนวนที่นั่ง
-  int selectedSeats = 1;
-
   @override
   Widget build(BuildContext context) {
-    // Mockup data
-    String leagueName = "Premier League";
-    String matchDate = "2025-02-15";
-    String matchTime = "20:00";
-    String stadiumName = "Old Trafford";
-    String description = "This is a mockup description of the match. It includes important details like the event schedule, venue, and seating options. You can choose your preferred section and book tickets accordingly.";
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Match Detail"),
+        title: const Text(
+          "Match Details",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
       ),
       body: ListView(
         children: [
-          // รูปภาพที่ไม่เลื่อน
+          // Stadium Image Card
+          const StadiumCard(),
+
+          // Match Title Card
           Container(
-            margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            height: 360,
-            width: (MediaQuery.of(context).size.width) - 30,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/staduim/S2.png'),
-                fit: BoxFit.scaleDown, // ทำให้รูปภาพครอบคลุมพื้นที่ทั้งหมด
-              ),
+            margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade200,
+                  spreadRadius: 2,
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Match ID: ${widget.matchId}",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // คำอธิบายของแมตช์ (Description)
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color.fromARGB(255, 226, 226, 226), width: 1), // เส้นขอบ
-                color: const Color.fromARGB(255, 255, 255, 255),
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 195, 195, 195),
-                    blurRadius: 20,
-                    offset: Offset(0, 0),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    leagueName,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "Date: $matchDate",
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "Time: $matchTime",
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "Stadium: $stadiumName",
-                    style: const TextStyle(fontSize: 16, color: Colors.black87),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Description: $description",
-                    style: const TextStyle(fontSize: 16, color: Colors.black54),
-                    textAlign: TextAlign.justify,
-                  ),
-                ],
-              ),
-            ),
+          // Match Info Card
+          MatchInfoCard(
+            leagueName: widget.leagueName,
+            matchDate: widget.matchDate,
+            matchTime: widget.matchTime,
+            stadiumName: widget.stadiumName,
+            description: widget.description,
           ),
 
-          // ListView สำหรับเลือกโซนตั๋ว
-          _buildTicketContainer(context, "Section Zone A", 1000),
-          _buildTicketContainer(context, "Section Zone B", 800),
-          _buildTicketContainer(context, "Section Zone C", 600),
-          _buildTicketContainer(context, "Section Zone D", 500),
+          // Zone Cards
+          ZoneCard(
+            zone: "North Zone A",
+            price: 1000,            
+            onTap: () => _navigateToBooking("North Zone A", 1000),
+          ),
+          ZoneCard(
+            zone: "South Zone B",
+            price: 800,            
+            onTap: () => _navigateToBooking("South Zone B", 800),
+          ),
+          ZoneCard(
+            zone: "West Zone C",
+            price: 600,            
+            onTap: () => _navigateToBooking("West Zone C", 600),
+          ),
+          ZoneCard(
+            zone: "East Zone D",
+            price: 500,            
+            onTap: () => _navigateToBooking("East Zone D", 500),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTicketContainer(BuildContext context, String zone, int price) {
+  void _navigateToBooking(String zone, int price) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TicketBooking(
+          matchId: widget.matchId,
+          title: widget.title,
+          zone: zone,
+          price: price,
+        ),
+      ),
+    );
+  }
+}
+
+
+class StadiumCard extends StatelessWidget {
+  const StadiumCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      height: 360,
+      width: (MediaQuery.of(context).size.width) - 30,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/staduim/S2.png'),
+          fit: BoxFit.scaleDown,
+        ),
+      ),
+    );
+  }
+}
+
+class MatchInfoCard extends StatelessWidget {
+  final String leagueName;
+  final String matchDate;
+  final String matchTime;
+  final String stadiumName;
+  final String description;
+
+  const MatchInfoCard({
+    super.key,
+    required this.leagueName,
+    required this.matchDate,
+    required this.matchTime,
+    required this.stadiumName,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: const [
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
           BoxShadow(
-            color: Color.fromARGB(255, 211, 211, 211),
-            blurRadius: 8,
-            offset: Offset(0, 5),
+            color: Colors.grey.shade300,
+            spreadRadius: 2,
+            blurRadius: 15,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ส่วนของข้อมูลโซนและราคา
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                zone,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                "Price: ฿$price",
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.black54,
-                ),
-              ),
-            ],
-          ),
-
-          // ใช้ Row เพื่อจัดวาง Dropdown และปุ่ม Book Now
           Row(
             children: [
-              // Dropdown สำหรับเลือกจำนวนที่นั่ง
-              DropdownButton<int>(
-                value: selectedSeats,
-                onChanged: (int? newValue) {
-                  setState(() {
-                    selectedSeats = newValue!;
-                  });
-                },
-                items: List.generate(
-                  10,
-                  (index) => DropdownMenuItem<int>(
-                    value: index + 1,
-                    child: Text((index + 1).toString()),
-                  ),
-                ),
-                
-                underline: const SizedBox(),
-              ),
+              const Icon(Icons.sports_soccer, size: 30, color: Color.fromARGB(255, 0, 0, 0)),
               const SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Ticket for $zone with $selectedSeats seat(s) booked!')),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                ),
-                child: const Text(
-                  'Book Now',
-                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.normal),
+              Text(
+                leagueName,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          _buildInfoRow(Icons.calendar_today, 'Date: $matchDate'),
+          const SizedBox(height: 10),
+          _buildInfoRow(Icons.access_time, 'Time: $matchTime'),
+          const SizedBox(height: 10),
+          _buildInfoRow(Icons.stadium, 'Stadium: $stadiumName'),
+          const SizedBox(height: 15),
+          Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Description',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.justify,
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.grey),
+        const SizedBox(width: 10),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ZoneCard extends StatelessWidget {
+  final String zone;
+  final int price;
+  final VoidCallback onTap;
+
+  const ZoneCard({
+    super.key,
+    required this.zone,
+    required this.price,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            spreadRadius: 2,
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(15),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.chair, color: Colors.grey),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        zone,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '฿$price',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: onTap,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                  ),
+                  child: const Text(
+                    'Book Now',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
