@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:layout/Auth/login.dart';
 import 'package:layout/Auth/sign_up.dart';
+import 'package:layout/Community/team.dart';
+import 'package:layout/Community/team_community.dart';
+import 'package:layout/MatchDay/listmatch.dart';
+import 'package:layout/News/newslist.dart';
+import 'package:layout/account.dart';
 import 'screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  // ต้องเรียก ensureInitialized ก่อนเริ่ม Firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // รอให้ Firebase initialize เสร็จก่อน
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
   runApp(const MyApp());
 }
 
@@ -22,6 +37,11 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const MainScreen(),
         '/signup': (context) => const SignUp(),
         '/login': (context) => const LoginPage(),
+        '/account': (context) => const Account(),
+        '/matchlist': (context) => MatchListScreen(),
+        '/community' : (context) => const Team(),
+        '/teamcommunity': (context) => const TeamCommunity(),
+        '/newslist': (context) => const NewsListPage(),
       },
     );
   }

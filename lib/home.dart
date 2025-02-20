@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'model/category.dart';
+import 'component/playercard.dart';
 import 'package:intl/intl.dart';
 
 class Home extends StatelessWidget {
@@ -7,30 +8,32 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final email = ModalRoute.of(context)?.settings.arguments as String?;
+    bool isLogin = email != null;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
           Stack(
-            clipBehavior: Clip.none, // อนุญาตให้วัตถุยื่นออกนอก Stack
+            clipBehavior: Clip.none, 
             children: [
-              // Container สำหรับภาพพื้นหลัง
+              
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: 500, // ความสูงของ container
+                height: 500, 
                 decoration: const BoxDecoration(
-                  // borderRadius: BorderRadius.only(
-                  //   bottomLeft: Radius.circular(25),
-                  //   bottomRight: Radius.circular(25),
-                  // ),
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/red2.jpg'),
-                    fit: BoxFit.fill,
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF091442),
+                      Color.fromARGB(255, 40, 78, 107),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
               ),
-
+      
               Positioned(
                   top: 70,
                   left: 30,
@@ -38,7 +41,7 @@ class Home extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     width: 450,
                     height: 50,
-                    // color: Colors.green,
+                    
                     child: Text(
                       'Today is ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
                       style: const TextStyle(
@@ -55,24 +58,25 @@ class Home extends StatelessWidget {
                       ),
                     ),
                   )),
-
+      
               Positioned(
-                top: 70, // ระยะห่างจากด้านบน
-                right: 30, // ระยะห่างจากด้านขวา
+                top: 70, 
+                right: 30, 
                 child: Container(
-                  width: 40, // ขนาดของวงกลม
-                  height: 40, // ขนาดของวงกลม
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle, // ทำให้ container เป็นวงกลม
+                  width: 40, 
+                  height: 40, 
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle, 
                     image: DecorationImage(
-                      image: AssetImage(
-                          'assets/images/profile.png'), // เปลี่ยนเป็น path รูปที่คุณต้องการ
-                      fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่วงกลม
-                    ),
+                        image: AssetImage(isLogin 
+                            ? 'assets/images/user.png'
+                            : 'assets/images/profile.png'),
+                    fit: BoxFit.cover, 
                   ),
                 ),
               ),
-              
+              ),
+      
               Positioned(
                   top: 450,
                   left: 0,
@@ -87,10 +91,10 @@ class Home extends StatelessWidget {
                       ),
                     ),
                   )),
-              // Positioned สำหรับข้อความ "Hi, Goodmorning"
+              
               const Positioned(
-                top: 160, // ระยะห่างจากด้านบน
-                left: 20, // ระยะห่างจากด้านซ้าย
+                top: 160, 
+                left: 20, 
                 child: Text(
                   'Hi, Goodmorning!',
                   style: TextStyle(
@@ -107,13 +111,13 @@ class Home extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Positioned สำหรับข้อความเพิ่มเติม
+      
+              
               const Positioned(
-                top: 210, // ระยะห่างจากด้านบน
-                left: 20, // ระยะห่างจากด้านซ้าย
+                top: 210, 
+                left: 20, 
                 child: Text(
-                  'Welcome to your day!',
+                  'Welcome to GoalTix!',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white,
@@ -127,20 +131,34 @@ class Home extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Positioned สำหรับ ListView ที่ยื่นออกมา
+      
+              // const Positioned(
+              //   top: 240, 
+              //   left: 37, 
+              //   child: Text(
+              //     '1st Ticket App in the World',
+              //     style: TextStyle(
+              //       fontSize: 12,
+              //       fontStyle: FontStyle.italic,
+              //       color: Color.fromARGB(255, 255, 255, 255),
+                    
+              //     ),
+              //   ),
+              // ),
+      
+              
               Positioned(
-                top: 300, // ระยะห่างจากด้านบน
-                left: 0, // ระยะห่างจากด้านซ้าย
-                right: 0, // ระยะห่างจากด้านขวา
+                top: 300, 
+                left: 0, 
+                right: 0, 
                 child: SizedBox(
-                  height: 230, // กำหนดความสูงของ ListView
+                  height: 230, 
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       return MyCard(
-                          item: items[index]); // ส่งข้อมูล Item ไปที่ MyCard
+                          item: items[index]); 
                     },
                   ),
                 ),
@@ -151,78 +169,91 @@ class Home extends StatelessWidget {
             height: 10,
           ),
           Container(
-              height: 100,
+      
               margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-              // color: Colors.amber,
-              child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+              
+              child:  Column(
+                children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        IconButton(
-                            onPressed: null,
-                            icon: Icon(
-                              Icons.stadium_rounded,
-                              size: 30,
-                            )),
-                        Text(
-                          'Match Day',
-                          style: TextStyle(fontSize: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/matchlist');
+                                },
+                                icon: const Icon(
+                                  Icons.stadium_rounded,
+                                  size: 30,
+                                )),
+                            const Text(
+                              'Match Day',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            onPressed: null,
-                            icon: Icon(
-                              Icons.people_alt,
-                              size: 30,
-                            )),
-                        Text(
-                          'Community',
-                          style: TextStyle(fontSize: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/community');
+                                },
+                                icon: const Icon(
+                                  Icons.people_alt,
+                                  size: 30,
+                                )),
+                            const Text(
+                              'Community',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            onPressed: null,
-                            icon: Icon(
-                              Icons.newspaper,
-                              size: 30,
-                            )),
-                        Text(
-                          'News',
-                          style: TextStyle(fontSize: 10),
+                         Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/newslist');
+                                },
+                                icon:const Icon(
+                                  Icons.newspaper,
+                                  size: 30,
+                                )),
+                            const Text(
+                              'News',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            onPressed: null,
-                            icon: Icon(
-                              Icons.history,
-                              size: 30,
-                            )),
-                        Text(
-                          'History',
-                          style: TextStyle(fontSize: 10),
+                        const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: null,
+                                icon: Icon(
+                                  Icons.history,
+                                  size: 30,
+                                )),
+                            Text(
+                              'History',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ]))
+                      ]),
+      
+                  const PlayeroftheWeek(),
+                ],
+              ))
         ],
       ),
     );
   }
 }
+
 
 class MyCard extends StatelessWidget {
   const MyCard({super.key, required this.item});
@@ -234,14 +265,14 @@ class MyCard extends StatelessWidget {
       children: [
         Container(
           width: 350,
-          height: 210, // กำหนดความสูงให้ชัดเจน
+          height: 210, 
           margin: const EdgeInsets.fromLTRB(20, 10, 10, 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
               image: AssetImage(item.imagePath),
-              fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่ทั้งหมด
-            ),            
+              fit: BoxFit.cover, 
+            ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -252,7 +283,7 @@ class MyCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ชื่อสินค้า
+                    
                     Text(
                       item.name,
                       style: const TextStyle(
@@ -261,9 +292,9 @@ class MyCard extends StatelessWidget {
                         color: Colors.white,
                         shadows: [
                           Shadow(
-                            color: Color.fromARGB(255, 59, 59, 59), // สีขอบ
-                            offset: Offset(1.0, 1.0), // กำหนดทิศทางของเงา (ขอบ)
-                            blurRadius: 3.0, // ขนาดของขอบ
+                            color: Color.fromARGB(255, 59, 59, 59), 
+                            offset: Offset(1.0, 1.0), 
+                            blurRadius: 3.0, 
                           ),
                         ],
                       ),
@@ -276,9 +307,9 @@ class MyCard extends StatelessWidget {
                         color: Colors.white,
                         shadows: [
                           Shadow(
-                            color: Color.fromARGB(255, 59, 59, 59), // สีขอบ
-                            offset: Offset(1.0, 1.0), // กำหนดทิศทางของเงา (ขอบ)
-                            blurRadius: 3.0, // ขนาดของขอบ
+                            color: Color.fromARGB(255, 59, 59, 59), 
+                            offset: Offset(1.0, 1.0), 
+                            blurRadius: 3.0, 
                           ),
                         ],
                       ),
