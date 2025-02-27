@@ -1,5 +1,11 @@
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
+# Ignore pubspec.lock file
 pubspec.lock
+
+# Ignore package_config.json file
+.dart_tool/package_config.json
+# Ignore .dart_tool folder
+.dart_tool/
+# Ignore .flutter-plugins file
+.flutter-plugins
+# Ignore .flutter-plugins-dependencies file
+ .flutter-plugins-dependencies

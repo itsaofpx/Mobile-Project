@@ -210,11 +210,6 @@
       "rootUri": "file:///opt/homebrew/Caskroom/flutter/3.24.5/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.7"
-
-
-
-
-      
     },
     {
       "name": "flutter_web_plugins",
@@ -481,7 +476,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-02-27T12:20:31.769647Z",
+  "generated": "2025-02-27T15:08:13.746246Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///opt/homebrew/Caskroom/flutter/3.24.5/flutter",
