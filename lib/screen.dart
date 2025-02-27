@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:layout/account.dart';
+import 'package:layout/profile_page.dart';
 import 'navbar.dart';
 import 'home.dart';
 import 'ticket.dart';
@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _pages = [
     const Home(),
     const Ticket(),
-    const Account()
+    const ProfilePage()
   ];
 
   @override

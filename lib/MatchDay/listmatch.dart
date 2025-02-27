@@ -3,9 +3,15 @@ import 'package:intl/intl.dart';
 import 'package:layout/MatchDay/matchdetail.dart';
 import 'package:layout/model/match.dart';
 
-class MatchListScreen extends StatelessWidget {
+class MatchListScreen extends StatefulWidget {  // เปลี่ยนเป็น StatefulWidget
   MatchListScreen({Key? key}) : super(key: key);
 
+  @override
+  State<MatchListScreen> createState() => _MatchListScreenState();
+}
+
+class _MatchListScreenState extends State<MatchListScreen> {
+  
   final List<Match> matches = [
     Match(
       matchId: "M2025021501",
@@ -42,6 +48,31 @@ class MatchListScreen extends StatelessWidget {
     ),
   ];
 
+  List<Match> filteredMatches = [];  // เพิ่มตัวแปรสำหรับเก็บรายการที่กรองแล้ว
+  final TextEditingController searchController = TextEditingController();  // Controller สำหรับ TextField
+
+  @override
+  void initState() {
+    super.initState();
+    filteredMatches = matches;  // เริ่มต้นให้แสดงทุกรายการ
+  }
+
+  // เพิ่มฟังก์ชันสำหรับค้นหา
+  void searchMatches(String query) {
+    setState(() {
+      filteredMatches = matches.where((match) {
+        final titleLower = match.title.toLowerCase();
+        final leagueLower = match.leagueName.toLowerCase();
+        final stadiumLower = match.stadiumName.toLowerCase();
+        final searchLower = query.toLowerCase();
+
+        return titleLower.contains(searchLower) ||
+            leagueLower.contains(searchLower) ||
+            stadiumLower.contains(searchLower);
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,168 +80,198 @@ class MatchListScreen extends StatelessWidget {
         title: const Text('Match Schedule'),
         backgroundColor: Colors.white,
       ),
-      body: ListView.builder(
-        itemCount: matches.length,
-        itemBuilder: (context, index) {
-          final match = matches[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+      body: Column(  // เปลี่ยนจาก ListView.builder เป็น Column
+        children: [
+          // เพิ่ม Search Box
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: 'Search matches...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MatchDetail(
-                        matchId: match.matchId,
-                        title: match.title,
-                        leagueName: match.leagueName,
-                        matchDate: match.matchDate,
-                        matchTime: match.matchTime,
-                        stadiumName: match.stadiumName,
-                        description: match.description,
-                      ),
+              onChanged: searchMatches,
+            ),
+          ),
+          // แสดงรายการแมตช์
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredMatches.length,
+              itemBuilder: (context, index) {
+                final match = filteredMatches[index];  // ใช้ filteredMatches แทน matches
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Card(
+                    // ... คงส่วน Card Widget เดิมไว้
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  );
-                },
-                child: Column(
-                  children: [
-                    // Match Image
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
-                      ),
-                      child: Image.network(
-                        match.linkpic,
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            height: 200,
-                            color: Colors.grey[300],
-                            child: const Center(
-                              child: Icon(Icons.error_outline),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MatchDetail(
+                              matchId: match.matchId,
+                              title: match.title,
+                              leagueName: match.leagueName,
+                              matchDate: match.matchDate,
+                              matchTime: match.matchTime,
+                              stadiumName: match.stadiumName,
+                              description: match.description,
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color(0xFF0E1E5B),
-                            Color(0xFF091442),
-                          ],
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          ),
+                        );
+                      },
+                      child: Column(
                         children: [
-                          Text(
-                            match.leagueName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 255, 255, 255),
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
+                            child: Image.network(
+                              match.linkpic,
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 200,
+                                  color: Colors.grey[300],
+                                  child: const Center(
+                                    child: Icon(Icons.error_outline),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 27, 41, 97),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              'Match ID: ${match.matchId}',
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                fontSize: 12,
+                            padding: const EdgeInsets.all(16),
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Color(0xFF0E1E5B),
+                                  Color(0xFF091442),
+                                ],
                               ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  match.leagueName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(255, 27, 41, 97),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    'Match ID: ${match.matchId}',
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  match.title,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.calendar_today,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      DateFormat('EEEE, MMMM d, y')
+                                          .format(DateTime.parse(match.matchDate)),
+                                      style: const TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.access_time,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      match.matchTime,
+                                      style: const TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.stadium,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      match.stadiumName,
+                                      style: const TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            match.title,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.calendar_today,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                DateFormat('EEEE, MMMM d, y')
-                                    .format(DateTime.parse(match.matchDate)),
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.access_time,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                match.matchTime,
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.stadium,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                match.stadiumName,
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 }

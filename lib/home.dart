@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'model/category.dart';
+import 'component/playercard.dart';
 import 'package:intl/intl.dart';
 
 class Home extends StatelessWidget {
@@ -9,6 +10,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final email = ModalRoute.of(context)?.settings.arguments as String?;
     bool isLogin = email != null;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -24,14 +26,14 @@ class Home extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       Color(0xFF091442),
-                      Color(0xFF6594C0),
+                      Color.fromARGB(255, 40, 78, 107),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                 ),
               ),
-
+      
               Positioned(
                   top: 70,
                   left: 30,
@@ -56,7 +58,7 @@ class Home extends StatelessWidget {
                       ),
                     ),
                   )),
-
+      
               Positioned(
                 top: 70, 
                 right: 30, 
@@ -74,7 +76,7 @@ class Home extends StatelessWidget {
                 ),
               ),
               ),
-
+      
               Positioned(
                   top: 450,
                   left: 0,
@@ -109,13 +111,13 @@ class Home extends StatelessWidget {
                   ),
                 ),
               ),
-
+      
               
               const Positioned(
                 top: 210, 
                 left: 20, 
                 child: Text(
-                  'Welcome to your day!',
+                  'Welcome to GoalTix!',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white,
@@ -129,7 +131,21 @@ class Home extends StatelessWidget {
                   ),
                 ),
               ),
-
+      
+              // const Positioned(
+              //   top: 240, 
+              //   left: 37, 
+              //   child: Text(
+              //     '1st Ticket App in the World',
+              //     style: TextStyle(
+              //       fontSize: 12,
+              //       fontStyle: FontStyle.italic,
+              //       color: Color.fromARGB(255, 255, 255, 255),
+                    
+              //     ),
+              //   ),
+              // ),
+      
               
               Positioned(
                 top: 300, 
@@ -153,84 +169,91 @@ class Home extends StatelessWidget {
             height: 10,
           ),
           Container(
-              height: 100,
+      
               margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
               
-              child:  Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+              child:  Column(
+                children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/matchlist');
-                            },
-                            icon: const Icon(
-                              Icons.stadium_rounded,
-                              size: 30,
-                            )),
-                        const Text(
-                          'Match Day',
-                          style: TextStyle(fontSize: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/matchlist');
+                                },
+                                icon: const Icon(
+                                  Icons.stadium_rounded,
+                                  size: 30,
+                                )),
+                            const Text(
+                              'Match Day',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/community');
-                            },
-                            icon: const Icon(
-                              Icons.people_alt,
-                              size: 30,
-                            )),
-                        const Text(
-                          'Community',
-                          style: TextStyle(fontSize: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/community');
+                                },
+                                icon: const Icon(
+                                  Icons.people_alt,
+                                  size: 30,
+                                )),
+                            const Text(
+                              'Community',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                     Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/newslist');
-                            },
-                            icon:const Icon(
-                              Icons.newspaper,
-                              size: 30,
-                            )),
-                        const Text(
-                          'News',
-                          style: TextStyle(fontSize: 10),
+                         Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/newslist');
+                                },
+                                icon:const Icon(
+                                  Icons.newspaper,
+                                  size: 30,
+                                )),
+                            const Text(
+                              'News',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                            onPressed: null,
-                            icon: Icon(
-                              Icons.history,
-                              size: 30,
-                            )),
-                        Text(
-                          'History',
-                          style: TextStyle(fontSize: 10),
+                        const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                                onPressed: null,
+                                icon: Icon(
+                                  Icons.history,
+                                  size: 30,
+                                )),
+                            Text(
+                              'History',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ]))
+                      ]),
+      
+                  const PlayeroftheWeek(),
+                ],
+              ))
         ],
       ),
     );
   }
 }
+
 
 class MyCard extends StatelessWidget {
   const MyCard({super.key, required this.item});

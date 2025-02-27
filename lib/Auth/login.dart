@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:layout/data/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:layout/api/teams/user.dart';
+import 'package:layout/model/user_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,16 +13,38 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String email = "";
   String password = "";
+  bool _isLoading = false;
 
-  // Define theme colors
-  static const Color darkBlue = Color(0xFF0E1E5B);
   static const Color deeperBlue = Color(0xFF091442);
   static const Color mediumBlue = Color(0xFF3562A6);
-  static const Color lightBlue = Color(0xFF6594C0);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 20.0),
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Color(0xFF0E1E5B),
+              size: 25,
+            ),
+            onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: IconButton(
+              icon: const Icon(Icons.home, color: Color(0xFF0E1E5B), size: 30),
+              onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
+            ),
+          ),
+        ],
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -54,10 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 10),
                     const Text(
                       "Sign in to continue",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: mediumBlue,
-                      ),
+                      style: TextStyle(fontSize: 16, color: mediumBlue),
                     ),
                     const SizedBox(height: 40),
                     _buildTextField(
@@ -81,25 +102,29 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                     const SizedBox(height: 40),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                    _isLoading
+                        ? const CircularProgressIndicator(color: deeperBlue)
+                        : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 50,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            backgroundColor: deeperBlue,
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () => _handleLogin(context),
+                          child: const Text(
+                            "Log In",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                        backgroundColor: deeperBlue,
-                        foregroundColor: Colors.white,
-                      ),
-                      onPressed: () => _handleLogin(context),
-                      child: const Text(
-                        "Log In",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -112,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                           onTap: () {
                             Navigator.pushNamed(context, '/signup');
                           },
-                          child:const  Text(
+                          child: const Text(
                             "Sign Up",
                             style: TextStyle(
                               color: deeperBlue,
@@ -133,21 +158,59 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _handleLogin(BuildContext context) {
+  Future<void> _handleLogin(BuildContext context) async {
     if (email.isEmpty || password.isEmpty) {
       _showAlert(context, "Error", "Please fill in all required fields!");
       return;
     }
 
-    bool isValidUser = user.any(
-      (u) => u['email'] == email && u['password'] == password,
-    );
+    setState(() {
+      _isLoading = true;
+    });
 
-    if (isValidUser) {
-      _showSuccessSnackBar(context, "Login successful!");
-      Navigator.pushNamed(context, '/home', arguments: email);
-    } else {
-      _showAlert(context, "Error", "Invalid email or password.");
+    try {
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email.trim(), password: password);
+
+      final UserApi userApi = UserApi();
+      final String userRole = await userApi.getUserRoleByUserEmail(
+        email.trim(),
+      );
+
+      await UserPreferences.saveUserLogin(
+        email: email.trim(),
+        userId: userCredential.user?.uid ?? '',
+      );
+
+      if (mounted) {
+        _showSuccessSnackBar(context, "Login successful!");
+
+        if (userRole == 'admin') {
+          Navigator.pushReplacementNamed(context, '/admin');
+        } else {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided.';
+      } else if (e.code == 'invalid-email') {
+        message = 'The email address is not valid.';
+      } else {
+        message = e.message ?? 'An error occurred during login.';
+      }
+      _showAlert(context, "Error", message);
+    } catch (e) {
+      _showAlert(context, "Error", "An unexpected error occurred.");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -177,7 +240,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide(color: deeperBlue, width: 2),
+          borderSide: const BorderSide(color: deeperBlue, width: 2),
         ),
       ),
     );
@@ -194,22 +257,23 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _showAlert(
-      BuildContext context, String title, String message) async {
+    BuildContext context,
+    String title,
+    String message,
+  ) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: Text(title, style:const  TextStyle(color: deeperBlue)),
-          content: Text(message, style:const  TextStyle(color: mediumBlue)),
+          title: Text(title, style: const TextStyle(color: deeperBlue)),
+          content: Text(message, style: const TextStyle(color: mediumBlue)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              style: TextButton.styleFrom(
-                foregroundColor: deeperBlue,
-              ),
+              style: TextButton.styleFrom(foregroundColor: deeperBlue),
               child: const Text("OK"),
             ),
           ],
