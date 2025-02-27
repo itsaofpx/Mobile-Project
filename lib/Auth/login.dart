@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:layout/api/teams/user.dart';
 import 'package:layout/model/user_preferences.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:  Colors.white,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 20.0),
@@ -39,11 +39,7 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
             padding: const EdgeInsets.only(right: 20.0),
             child: IconButton(
-              icon: const Icon(
-                Icons.home,
-                color: Color(0xFF0E1E5B),
-                size: 30,
-              ),
+              icon: const Icon(Icons.home, color: Color(0xFF0E1E5B), size: 30),
               onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
             ),
           ),
@@ -82,10 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 10),
                     const Text(
                       "Sign in to continue",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: mediumBlue,
-                      ),
+                      style: TextStyle(fontSize: 16, color: mediumBlue),
                     ),
                     const SizedBox(height: 40),
                     _buildTextField(
@@ -112,24 +105,26 @@ class _LoginPageState extends State<LoginPage> {
                     _isLoading
                         ? const CircularProgressIndicator(color: deeperBlue)
                         : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              backgroundColor: deeperBlue,
-                              foregroundColor: Colors.white,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 50,
                             ),
-                            onPressed: () => _handleLogin(context),
-                            child: const Text(
-                              "Log In",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            backgroundColor: deeperBlue,
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () => _handleLogin(context),
+                          child: const Text(
+                            "Log In",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
+                        ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -164,54 +159,60 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleLogin(BuildContext context) async {
-  if (email.isEmpty || password.isEmpty) {
-    _showAlert(context, "Error", "Please fill in all required fields!");
-    return;
+    if (email.isEmpty || password.isEmpty) {
+      _showAlert(context, "Error", "Please fill in all required fields!");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email.trim(), password: password);
+
+      final UserApi userApi = UserApi();
+      final String userRole = await userApi.getUserRoleByUserEmail(
+        email.trim(),
+      );
+
+      await UserPreferences.saveUserLogin(
+        email: email.trim(),
+        userId: userCredential.user?.uid ?? '',
+      );
+
+      if (mounted) {
+        _showSuccessSnackBar(context, "Login successful!");
+
+        if (userRole == 'admin') {
+          Navigator.pushReplacementNamed(context, '/admin');
+        } else {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided.';
+      } else if (e.code == 'invalid-email') {
+        message = 'The email address is not valid.';
+      } else {
+        message = e.message ?? 'An error occurred during login.';
+      }
+      _showAlert(context, "Error", message);
+    } catch (e) {
+      _showAlert(context, "Error", "An unexpected error occurred.");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
-
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    // เข้าสู่ระบบด้วย Firebase Auth
-    final UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: email.trim(),
-      password: password,
-    );
-
-    // บันทึกข้อมูลลง SharedPreferences
-    await UserPreferences.saveUserLogin(
-      email: email.trim(),
-      userId: userCredential.user?.uid ?? '',
-    );
-
-    if (mounted) {
-      _showSuccessSnackBar(context, "Login successful!");
-      Navigator.pushReplacementNamed(context, '/home');
-    }
-  } on FirebaseAuthException catch (e) {
-    String message;
-    if (e.code == 'user-not-found') {
-      message = 'No user found for that email.';
-    } else if (e.code == 'wrong-password') {
-      message = 'Wrong password provided.';
-    } else if (e.code == 'invalid-email') {
-      message = 'The email address is not valid.';
-    } else {
-      message = e.message ?? 'An error occurred during login.';
-    }
-    _showAlert(context, "Error", message);
-  } catch (e) {
-    _showAlert(context, "Error", "An unexpected error occurred.");
-  } finally {
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-}
 
   Widget _buildTextField({
     required String hintText,
@@ -256,7 +257,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _showAlert(
-      BuildContext context, String title, String message) async {
+    BuildContext context,
+    String title,
+    String message,
+  ) async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -269,9 +273,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              style: TextButton.styleFrom(
-                foregroundColor: deeperBlue,
-              ),
+              style: TextButton.styleFrom(foregroundColor: deeperBlue),
               child: const Text("OK"),
             ),
           ],

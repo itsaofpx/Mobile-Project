@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:layout/api/teams/user.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -9,8 +10,11 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final UserApi _userApi = UserApi();
+  String username = "";
   String email = "";
   String password = "";
+  String confirmPassword = "";
   bool _isLoading = false;
 
   static const Color deeperBlue = Color(0xFF091442);
@@ -20,30 +24,16 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:  Colors.white,
+        backgroundColor: Colors.white,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 20.0),
-          child: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              color: Color(0xFF0E1E5B),
-              size: 25,
-            ),
-            onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
-          ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: deeperBlue, size: 25),
+          onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: IconButton(
-              icon: const Icon(
-                Icons.home,
-                color: Color(0xFF0E1E5B),
-                size: 30,
-              ),
-              onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
-            ),
+          IconButton(
+            icon: const Icon(Icons.home, color: deeperBlue, size: 30),
+            onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
           ),
         ],
       ),
@@ -54,105 +44,75 @@ class _SignUpState extends State<SignUp> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 255, 255, 255),
-              Color.fromARGB(255, 242, 244, 255),
-            ],
+            colors: [Colors.white, Color.fromARGB(255, 242, 244, 255)],
           ),
         ),
         child: Center(
-          child: SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 80),
-                    const Text(
-                      "Create Account",
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: deeperBlue,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Sign up to get started",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: mediumBlue,
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    _buildTextField(
-                      hintText: "Email",
-                      icon: Icons.email,
-                      onChanged: (value) {
-                        setState(() {
-                          email = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    _buildTextField(
-                      hintText: "Password",
-                      icon: Icons.lock,
-                      obscureText: true,
-                      onChanged: (value) {
-                        setState(() {
-                          password = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 40),
-                    _isLoading
-                        ? const CircularProgressIndicator(color: deeperBlue)
-                        : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 50),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              backgroundColor: deeperBlue,
-                              foregroundColor: Colors.white,
-                            ),
-                            onPressed: () => _handleSignUp(context),
-                            child: const Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 80),
+                  const Text(
+                    "Create Account",
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: deeperBlue),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text("Sign up to get started", style: TextStyle(fontSize: 16, color: mediumBlue)),
+                  const SizedBox(height: 40),
+                  _buildTextField(
+                    hintText: "Username",
+                    icon: Icons.person,
+                    onChanged: (value) => setState(() => username = value),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildTextField(
+                    hintText: "Email",
+                    icon: Icons.email,
+                    onChanged: (value) => setState(() => email = value),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildTextField(
+                    hintText: "Password",
+                    icon: Icons.lock,
+                    obscureText: true,
+                    onChanged: (value) => setState(() => password = value),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildTextField(
+                    hintText: "Confirm Password",
+                    icon: Icons.lock,
+                    obscureText: true,
+                    onChanged: (value) => setState(() => confirmPassword = value),
+                  ),
+                  const SizedBox(height: 40),
+                  _isLoading
+                      ? const CircularProgressIndicator(color: deeperBlue)
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                            backgroundColor: deeperBlue,
+                            foregroundColor: Colors.white,
                           ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Already have an account? ",
-                          style: TextStyle(color: mediumBlue),
+                          onPressed: () => _handleSignUp(context),
+                          child: const Text("Sign Up", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/login');
-                          },
-                          child: const Text(
-                            "Log In",
-                            style: TextStyle(
-                              color: deeperBlue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 40),
-                  ],
-                ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Already have an account? ", style: TextStyle(color: mediumBlue)),
+                      GestureDetector(
+                        onTap: () => Navigator.pushNamed(context, '/login'),
+                        child: const Text("Log In", style: TextStyle(color: deeperBlue, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                ],
               ),
             ),
           ),
@@ -168,41 +128,17 @@ class _SignUpState extends State<SignUp> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-
+    setState(() => _isLoading = true);
     try {
-      // สร้างบัญชีด้วย Firebase Auth
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password,
-      );
-
-      if (mounted) {
+      User? user = await _userApi.signUp(email, password, username, "user");
+      if (user != null) {
         _showSuccessSnackBar(context, "Account created successfully!");
-        Navigator.pushReplacementNamed(context, '/login');
+        Navigator.pushReplacementNamed(context, '/home');
       }
-    } on FirebaseAuthException catch (e) {
-      String message;
-      if (e.code == 'weak-password') {
-        message = 'The password provided is too weak.';
-      } else if (e.code == 'email-already-in-use') {
-        message = 'An account already exists for that email.';
-      } else if (e.code == 'invalid-email') {
-        message = 'The email address is not valid.';
-      } else {
-        message = e.message ?? 'An error occurred during registration.';
-      }
-      _showAlert(context, "Error", message);
     } catch (e) {
-      _showAlert(context, "Error", "An unexpected error occurred.");
+      _showAlert(context, "Sign Up Failed", e.toString());
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -239,49 +175,38 @@ class _SignUpState extends State<SignUp> {
   }
 
   String? _validateInputs() {
-    if (email.isEmpty || password.isEmpty) {
+    if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       return "All fields are required.";
-    } else if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
-        .hasMatch(email)) {
-      return "Please enter a valid email address.";
-    } else if (password.length < 8) {
-      return "Password must be at least 8 characters long.";
+    }
+    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(email)) {
+      return "Please enter a valid email.";
+    }
+    if (password.length < 8) {
+      return "Password must be at least 8 characters.";
+    }
+    if (password != confirmPassword) {
+      return "Passwords do not match.";
     }
     return null;
   }
 
   void _showSuccessSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: mediumBlue,
-        duration: const Duration(seconds: 3),
-      ),
+      SnackBar(content: Text(message), backgroundColor: mediumBlue, duration: const Duration(seconds: 3)),
     );
   }
 
-  Future<void> _showAlert(
-      BuildContext context, String title, String message) async {
+  Future<void> _showAlert(BuildContext context, String title, String message) async {
     return showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text(title, style: const TextStyle(color: deeperBlue)),
-          content: Text(message, style: const TextStyle(color: mediumBlue)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: deeperBlue,
-              ),
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(title, style: const TextStyle(color: deeperBlue)),
+        content: Text(message, style: const TextStyle(color: mediumBlue)),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("OK", style: TextStyle(color: deeperBlue))),
+        ],
+      ),
     );
   }
 }

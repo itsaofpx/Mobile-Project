@@ -26,11 +26,11 @@
 		</data>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		eNNrj89LfZ5S6I3Im0b/Yp6YRDE=
+		DO1N93SgdHotdP1p67H7F5XzfY8=
 		</data>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		+bsN/OdFKu2/hfAvmiNyJJ6W/kU=
+		C/NzOY/zMyHgaghufDJPiLN0AZQ=
 		</data>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -42,7 +42,7 @@
 		</data>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		s4W6DQKRbC1PlaKWV4rkwKfaBGU=
+		i21i9ajI7DJDJhPdOXLm0bQs8f8=
 		</data>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		dA82ZuCjVLVUp5fRYzJVNuRHSIE=
+		y2WpP1Aulvdb8CNvIiYEnurD1v4=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -95,14 +95,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			hzVsvwjG7yUI2kwe6vnVy5axjHUgk6WVN5TGMg9aOn0=
+			lj6H5MJSgx+Kb5icTANY0TX/R3jAEoL1lKxN1a6mRTQ=
 			</data>
 		</dict>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			P+XPCwDeLauDD7FW4iDEJIIHaA6zpTGpycVyIvAV5+k=
+			MaCu3Fu1dT306tb+4y0+Yk+cBwvH8ybV6h46PEXsehE=
 			</data>
 		</dict>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
@@ -123,7 +123,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			5N2OPcjI9gLq69BEyhvWxFra6rtLZAhIc14NswPwo/c=
+			Z06bSWMz2Y5BCH4oAwZU6fX55bjJU/PPMfB/BFC2ReY=
 			</data>
 		</dict>
 		<key>Modules/FirebaseCoreInternal.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
@@ -144,7 +144,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			pDzRvtoRCNLisftBGv7DdHGyfJBuvjXZwUVzdBXPdLs=
+			uD/xBzPme8s5CfE/S6au01c6ADpZdOKRY7iBeUbe/CA=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

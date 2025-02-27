@@ -1,54 +1,125 @@
 import 'package:flutter/material.dart';
-import 'package:layout/data/team_list.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:layout/api/teams/teams.dart';
 
 class Team extends StatelessWidget {
   const Team({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Team Community"),
-        elevation: 0, // ลบเงาของ AppBar
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              _showAddTeamDialog(context);
+            },
+          ),
+        ],
       ),
-      body: ListView(
-        // เปลี่ยนจาก Column เป็น ListView เพื่อให้สามารถเลื่อนได้
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        children:
-            teamCommunityList.map((team) {
+      body: StreamBuilder<QuerySnapshot>(
+        stream: TeamsApi().getTeamsStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text("Error loading teams"));
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text("No teams available"));
+          }
+
+          final teamCommunityList = snapshot.data!.docs;
+
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            itemCount: teamCommunityList.length,
+            itemBuilder: (context, index) {
+              var team = teamCommunityList[index];
               return TeamCard(
-                id: team['team_id']!,
-                name: team['name']!,
-                image: team['image']!,
+                teamID: team['team_id'],
+                teamName: team['team_name'],
+                teamImage: team['team_image'],
                 onTap: () {
                   Navigator.pushNamed(
                     context,
                     '/teamcommunity',
                     arguments: {
-                      'team_id': team['team_id']!,
-                      'team_name': team['name']!,
-                      'team_image': team['image']!,
+                      'team_id': team['team_id'],
+                      'team_name': team['team_name'],
+                      'team_image': team['team_image'],
                     },
                   );
                 },
               );
-            }).toList(),
+            },
+          );
+        },
       ),
+    );
+  }
+
+  void _showAddTeamDialog(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+    final TextEditingController imageController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Add New Team"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: "Team Name"),
+              ),
+              TextField(
+                controller: imageController,
+                decoration: const InputDecoration(labelText: "Team Image URL"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Add team to Firestore
+                await TeamsApi().addTeam(
+                  teamName: nameController.text,
+                  teamImage: imageController.text,
+                );
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
 class TeamCard extends StatelessWidget {
-  final String id;
-  final String name;
-  final String image;
+  final String teamID;
+  final String teamName;
+  final String teamImage;
   final VoidCallback onTap;
 
   const TeamCard({
     super.key,
-    required this.id,
-    required this.name,
-    required this.image,
+    required this.teamID,
+    required this.teamName,
+    required this.teamImage,
     required this.onTap,
   });
 
@@ -80,17 +151,22 @@ class TeamCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Image.asset(
-                      image,
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
+                    child: ClipOval(
+                      child: Image.network(
+                        teamImage,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.error, size: 60);
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      name,
+                      teamName,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
