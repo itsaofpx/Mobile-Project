@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:layout/Admin/ManageUsers/manage_users.dart';
 import 'package:layout/Admin/admin.dart';
 import 'package:layout/Auth/login.dart';
 import 'package:layout/Auth/sign_up.dart';
@@ -43,7 +44,8 @@ class MyApp extends StatelessWidget {
         '/community' : (context) => const Team(),
         '/teamcommunity': (context) => const TeamCommunity(),
         '/newslist': (context) => const NewsListPage(),
-        '/admin': (context) => const AdminPage(),
+        '/admin': (context) => const AdminHomePage(),
+        '/admin/users': (context) => const AdminUsersPage(),
       },
     );
   }
