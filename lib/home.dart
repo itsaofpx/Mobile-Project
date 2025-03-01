@@ -8,7 +8,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final email = ModalRoute.of(context)?.settings.arguments as String?;
+    final email = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     bool isLogin = email != null;
 
     return Scaffold(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:layout/api/teams/user.dart';
+import 'package:layout/api/user.dart';
 import 'package:layout/model/user_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -159,68 +159,82 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _handleLogin(BuildContext context) async {
-  if (email.isEmpty || password.isEmpty) {
-    _showAlert(context, "Error", "Please fill in all required fields!");
-    return;
-  }
-
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final UserCredential userCredential = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email.trim(), password: password);
-
-    final UserApi userApi = UserApi();
-    final String userRole = await userApi.getUserRoleByUserEmail(
-      email.trim(),
-    );
-
-    // Check user status
-    final bool isBanned = await userApi.isUserBanned(email.trim());
-    if (isBanned) {
-      _showAlert(context, "Access Denied", "You have been banned.");
-      return; // Exit the function if the user is banned
+    if (email.isEmpty || password.isEmpty) {
+      _showAlert(context, "Error", "Please fill in all required fields!");
+      return;
     }
 
-    await UserPreferences.saveUserLogin(
-      email: email.trim(),
-      userId: userCredential.user?.uid ?? '',
-    );
+    setState(() {
+      _isLoading = true;
+    });
 
-    if (mounted) {
-      _showSuccessSnackBar(context, "Login successful!");
+    try {
+      // First authenticate with Firebase
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email.trim(), password: password);
 
-      if (userRole == 'admin') {
-        Navigator.pushReplacementNamed(context, '/admin');
+      // Then check if user is banned
+      final UserApi userApi = UserApi();
+      final bool isBanned = await userApi.isUserBanned(email.trim());
+
+      if (isBanned) {
+        await FirebaseAuth.instance.signOut(); // Sign out if banned
+        _showAlert(context, "Access Denied", "You have been banned.");
+        setState(() {
+          _isLoading = false;
+        });
+        return; // Exit the function if the user is banned
+      }
+
+      // Now we can safely get the user ID from the authenticated user
+      final String userId = userCredential.user!.uid;
+
+      // Save user login info
+      await UserPreferences.saveUserLogin(email: email.trim(), userId: userId);
+
+      // Fetch user role from your database
+      final String userRole = await userApi.getUserRoleByUserEmail(
+        email.trim(),
+      );
+
+      if (mounted) {
+        _showSuccessSnackBar(context, "Login successful!");
+
+        if (userRole == 'admin') {
+          Navigator.pushReplacementNamed(context, '/admin');
+        } else {
+          Navigator.pushReplacementNamed(context, '/home', arguments: {
+            'user_id': userId,
+            'user_email': email.trim(),
+          });
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided.';
+      } else if (e.code == 'invalid-email') {
+        message = 'The email address is not valid.';
       } else {
-        Navigator.pushReplacementNamed(context, '/home');
+        message = e.message ?? 'An error occurred during login.';
+      }
+      _showAlert(context, "Error", message);
+    } catch (e) {
+      _showAlert(
+        context,
+        "Error",
+        "An unexpected error occurred: ${e.toString()}",
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
-  } on FirebaseAuthException catch (e) {
-    String message;
-    if (e.code == 'user-not-found') {
-      message = 'No user found for that email.';
-    } else if (e.code == 'wrong-password') {
-      message = 'Wrong password provided.';
-    } else if (e.code == 'invalid-email') {
-      message = 'The email address is not valid.';
-    } else {
-      message = e.message ?? 'An error occurred during login.';
-    }
-    _showAlert(context, "Error", message);
-  } catch (e) {
-    _showAlert(context, "Error", "An unexpected error occurred.");
-  } finally {
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
-}
-
 
   Widget _buildTextField({
     required String hintText,

@@ -106,9 +106,11 @@ class AdminHomePage extends StatelessWidget {
               onTap: () {},
             ),
             _buildDashboardCard(
-              icon: Icons.analytics,
-              title: "Analytics",
-              onTap: () {},
+              icon: Icons.sports_soccer,
+              title: "Manage Teams",
+              onTap: () {
+                Navigator.pushNamed(context, '/admin/teams');
+              },
             ),
           ],
         ),
