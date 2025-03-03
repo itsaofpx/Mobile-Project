@@ -36,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final userEmail = await UserPreferences.getEmail();
       final userIdFromPrefs = await UserPreferences.getUserId();
-      
+
       if (mounted) {
         setState(() {
           email = userEmail;
@@ -90,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         isLoading = true;
       });
-      
+
       await FirebaseAuth.instance.signOut();
       await UserPreferences.clearUserData();
 
@@ -115,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: const Text(
           'Profile',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -130,7 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         iconTheme: const IconThemeData(
-          color: Colors.white, // กำหนดสีของไอคอนให้เป็นสีขาว
+          color: Colors.white,
         ),
         actions: [
           IconButton(
@@ -162,11 +162,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       const SizedBox(height: 20),
                       const CircleAvatar(
-                        radius: 50,
+                        radius: 60,
                         backgroundColor: mediumBlue,
                         child: Icon(
                           Icons.person,
-                          size: 50,
+                          size: 60,
                           color: Colors.white,
                         ),
                       ),
@@ -182,20 +182,32 @@ class _ProfilePageState extends State<ProfilePage> {
                         content: userId ?? 'Not available',
                         icon: Icons.badge,
                       ),
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 40),
                       ElevatedButton.icon(
-                        icon: const Icon(Icons.logout,color: Colors.white,size: 25,),
-                        label: const Text('Logout' ,style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold ,fontSize: 20),),
+                        icon: const Icon(
+                          Icons.logout,
+                          color: Colors.white,
+                          size: 25,
+                        ),
+                        label: const Text(
+                          'Logout',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 40,
                             vertical: 15,
                           ),
-                          backgroundColor: const Color.fromARGB(255, 203, 24, 24),
+                          backgroundColor: const Color(0xFFCB1818),
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
+                          elevation: 5,
                         ),
                         onPressed: _handleLogout,
                       ),
@@ -214,32 +226,42 @@ class _ProfilePageState extends State<ProfilePage> {
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color.fromARGB(255, 184, 184, 184), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+        border: Border.all(
+          color: const Color.fromARGB(255, 200, 200, 200),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: mediumBlue, size: 24),
-              const SizedBox(width: 10),
+              Icon(icon, color: mediumBlue, size: 28),
+              const SizedBox(width: 12),
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
                   color: mediumBlue,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.only(left: 34),
+            padding: const EdgeInsets.only(left: 40),
             child: Text(
               content,
               style: const TextStyle(

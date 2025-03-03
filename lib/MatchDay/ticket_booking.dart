@@ -4,8 +4,13 @@ import 'payment.dart';
 class TicketBooking extends StatefulWidget {
   final String zone;
   final int price;
-  final String matchId;  // ลบค่าเริ่มต้นออก
-  final String title;    // ลบค่าเริ่มต้นออก
+  final String matchId;
+  final String title;
+  final String leagueName;
+  final String matchDate;
+  final String matchTime;
+  final String stadiumName;
+  final String description;
 
   const TicketBooking({
     Key? key,
@@ -13,6 +18,11 @@ class TicketBooking extends StatefulWidget {
     required this.price,
     required this.matchId,
     required this.title,
+    required this.leagueName,
+    required this.matchDate,
+    required this.matchTime,
+    required this.stadiumName,
+    required this.description,
   }) : super(key: key);
 
   @override
@@ -49,6 +59,7 @@ class _TicketBookingState extends State<TicketBooking> {
               zone: widget.zone,
               quantity: quantity,
               price: widget.price,
+
             ),
           ],
         ),
@@ -56,7 +67,7 @@ class _TicketBookingState extends State<TicketBooking> {
     );
   }
 
- void _showConfirmationDialog(BuildContext context) {
+void _showConfirmationDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -66,6 +77,10 @@ class _TicketBookingState extends State<TicketBooking> {
         zone: widget.zone,
         quantity: quantity,
         price: widget.price,
+        matchDate: widget.matchDate,
+        matchTime: widget.matchTime,
+        stadiumName: widget.stadiumName,
+        leagueName: widget.leagueName,
       );
     },
   );
@@ -123,7 +138,7 @@ class ZoneInfoCard extends StatelessWidget {
             ),
           ),
           Text(
-            '$zone',
+            'Zone Name: $zone',
             style: const TextStyle(
               fontSize: 18,
               color: Colors.grey,
@@ -282,6 +297,10 @@ class BookingConfirmationDialog extends StatelessWidget {
   final String zone;
   final int quantity;
   final int price;
+  final String matchDate;
+  final String matchTime;
+  final String stadiumName;
+  final String leagueName;
 
   const BookingConfirmationDialog({
     Key? key,
@@ -290,6 +309,10 @@ class BookingConfirmationDialog extends StatelessWidget {
     required this.zone,
     required this.quantity,
     required this.price,
+    required this.matchDate,
+    required this.matchTime,
+    required this.stadiumName,
+    required this.leagueName,
   }) : super(key: key);
 
   @override
@@ -329,6 +352,10 @@ class BookingConfirmationDialog extends StatelessWidget {
           zone: zone,
           quantity: quantity,
           price: price,
+          matchDate: matchDate,
+          matchTime: matchTime,
+          stadiumName: stadiumName,
+          leagueName: leagueName,
         ),
       ],
     );
@@ -437,6 +464,10 @@ class DialogActions extends StatelessWidget {
   final String zone;
   final int quantity;
   final int price;
+  final String matchDate;
+  final String matchTime;
+  final String stadiumName;
+  final String leagueName;
 
   const DialogActions({
     Key? key,
@@ -445,6 +476,10 @@ class DialogActions extends StatelessWidget {
     required this.zone,
     required this.quantity,
     required this.price,
+    required this.matchDate,
+    required this.matchTime,
+    required this.stadiumName,
+    required this.leagueName,
   }) : super(key: key);
 
   @override
@@ -484,6 +519,10 @@ class DialogActions extends StatelessWidget {
                     zone: zone,
                     quantity: quantity,
                     totalPrice: price * quantity,
+                    matchDate: matchDate,
+                    matchTime: matchTime,
+                    stadiumName: stadiumName,
+                    leagueName: leagueName,
                   ),
                 ),
               );

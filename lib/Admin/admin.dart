@@ -91,7 +91,9 @@ class AdminHomePage extends StatelessWidget {
             _buildDashboardCard(
               icon: Icons.event,
               title: "Manage Events",
-              onTap: () {},
+              onTap: () {
+                  Navigator.pushNamed(context, '/admin/match');
+              },
             ),
             _buildDashboardCard(
               icon: Icons.people,
@@ -109,6 +111,13 @@ class AdminHomePage extends StatelessWidget {
               icon: Icons.analytics,
               title: "Analytics",
               onTap: () {},
+            ),
+            _buildDashboardCard(
+              icon: Icons.newspaper,
+              title: "News",
+              onTap: () {
+                Navigator.pushNamed(context, '/admin/addnews');
+              },
             ),
           ],
         ),

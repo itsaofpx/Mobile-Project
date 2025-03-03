@@ -228,16 +228,18 @@ class Home extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const Column(
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
-                                onPressed: null,
-                                icon: Icon(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/history');
+                                },
+                                icon: const Icon(
                                   Icons.history,
                                   size: 30,
                                 )),
-                            Text(
+                            const Text(
                               'History',
                               style: TextStyle(fontSize: 10),
                             ),
