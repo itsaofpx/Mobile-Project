@@ -9,6 +9,16 @@ class MatchDetail extends StatefulWidget {
   final String matchTime;
   final String stadiumName;
   final String description;
+  final int zoneAprice;
+  final int zoneBprice;
+  final int zoneCprice;
+  final int zoneDprice;
+  final int zoneAseate;
+  final int zoneBseate;
+  final int zoneCseate;
+  final int zoneDseate;
+  
+
 
   const MatchDetail({
     super.key,
@@ -19,6 +29,14 @@ class MatchDetail extends StatefulWidget {
     required this.matchTime,
     required this.stadiumName,
     required this.description,
+    required this.zoneAprice,
+    required this.zoneBprice,
+    required this.zoneCprice,
+    required this.zoneDprice,
+    required this.zoneAseate,
+    required this.zoneBseate,
+    required this.zoneCseate,
+    required this.zoneDseate,
   });
 
   @override
@@ -93,23 +111,27 @@ class _MatchDetailState extends State<MatchDetail> {
           // Zone Cards
           ZoneCard(
             zone: "North Zone A",
-            price: 1000,            
-            onTap: () => _navigateToBooking("North Zone A", 1000),
+            price: widget.zoneAprice,
+            seatleft : widget.zoneAseate,            
+            onTap: () => _navigateToBooking("A", 1000),
           ),
           ZoneCard(
             zone: "South Zone B",
-            price: 800,            
-            onTap: () => _navigateToBooking("South Zone B", 800),
+            seatleft : widget.zoneBseate,            
+            price: widget.zoneBprice,            
+            onTap: () => _navigateToBooking("B", 800),
           ),
           ZoneCard(
             zone: "West Zone C",
-            price: 600,            
-            onTap: () => _navigateToBooking("West Zone C", 600),
+            seatleft : widget.zoneCseate,            
+            price: widget.zoneCprice,            
+            onTap: () => _navigateToBooking("C", 600),
           ),
           ZoneCard(
             zone: "East Zone D",
-            price: 500,            
-            onTap: () => _navigateToBooking("East Zone D", 500),
+            seatleft : widget.zoneDseate,            
+            price: widget.zoneDprice,            
+            onTap: () => _navigateToBooking("D", 500),
           ),
         ],
       ),
@@ -125,6 +147,11 @@ class _MatchDetailState extends State<MatchDetail> {
           title: widget.title,
           zone: zone,
           price: price,
+          matchDate: widget.matchDate,
+          matchTime: widget.matchTime,
+          stadiumName: widget.stadiumName,
+          leagueName: widget.leagueName,
+          description: widget.description,
         ),
       ),
     );
@@ -262,12 +289,14 @@ class ZoneCard extends StatelessWidget {
   final String zone;
   final int price;
   final VoidCallback onTap;
+  final int seatleft ;
 
   const ZoneCard({
     super.key,
     required this.zone,
     required this.price,
     required this.onTap,
+    required this.seatleft,
   });
 
   @override
@@ -322,6 +351,14 @@ class ZoneCard extends StatelessWidget {
                           fontSize: 16,
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'seats left $seatleft',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color.fromARGB(221, 110, 110, 110),
+                          
                         ),
                       ),
                     ],

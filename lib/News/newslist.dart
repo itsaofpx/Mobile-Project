@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:layout/model/news.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NewsListPage extends StatelessWidget {
   const NewsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final newsCollection = FirebaseFirestore.instance.collection('news');
+
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
@@ -20,9 +22,8 @@ class NewsListPage extends StatelessWidget {
             ),
           ),
         ),
-        // เพิ่ม iconTheme เพื่อกำหนดสีของปุ่มย้อนกลับ
         iconTheme: const IconThemeData(
-          color: Colors.white, // กำหนดสีของไอคอนให้เป็นสีขาว
+          color: Colors.white,
         ),
         title: const Text(
           'NEWS',
@@ -32,25 +33,163 @@ class NewsListPage extends StatelessWidget {
           ),
         ),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AddNewsDialog(),
+              );
+            },
+          ),
+        ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: mockNews.length,
-        itemBuilder: (context, index) {
-          final news = mockNews[index];
-          return NewsCard(news: news);
+      body: StreamBuilder<QuerySnapshot>(
+        stream: newsCollection.orderBy('news_time', descending: true).snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading news'));
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No news available'));
+          }
+
+          final newsDocs = snapshot.data!.docs;
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: newsDocs.length,
+            itemBuilder: (context, index) {
+              final news = newsDocs[index];
+              return NewsCard(
+                title: news['news_title'],
+                content: news['news_content'],
+                imageUrl: news['news_url'],
+                publishDate: news['news_time'],
+              );
+            },
+          );
         },
       ),
     );
   }
 }
 
+class AddNewsDialog extends StatefulWidget {
+  @override
+  _AddNewsDialogState createState() => _AddNewsDialogState();
+}
+
+class _AddNewsDialogState extends State<AddNewsDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _contentController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
+
+  void _addNews() async {
+    if (_formKey.currentState!.validate()) {
+      final newsCollection = FirebaseFirestore.instance.collection('news');
+
+      try {
+        await newsCollection.add({
+          'news_title': _titleController.text,
+          'news_content': _contentController.text,
+          'news_url': _imageUrlController.text,
+          'news_time': DateTime.now().toIso8601String(),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('News added successfully!')),
+        );
+
+        Navigator.pop(context); // Close the dialog
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add news: $e')),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add News'),
+      content: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: 'Title'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a title';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _contentController,
+                decoration: const InputDecoration(labelText: 'Content'),
+                maxLines: 3,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter content';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _imageUrlController,
+                decoration: const InputDecoration(labelText: 'Image URL'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an image URL';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context); // Close the dialog
+          },
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _addNews,
+          child: const Text('Add'),
+        ),
+      ],
+    );
+  }
+}
+
 class NewsCard extends StatelessWidget {
-  final NewsModel news;
+  final String title;
+  final String content;
+  final String imageUrl;
+  final String publishDate; // ใช้ String ตรงๆ จาก Firestore
 
   const NewsCard({
     super.key,
-    required this.news,
+    required this.title,
+    required this.content,
+    required this.imageUrl,
+    required this.publishDate,
   });
 
   @override
@@ -66,7 +205,12 @@ class NewsCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NewsDetailPage(news: news),
+              builder: (context) => NewsDetailPage(
+                title: title,
+                content: content,
+                imageUrl: imageUrl,
+                publishDate: publishDate,
+              ),
             ),
           );
         },
@@ -78,11 +222,10 @@ class NewsCard extends StatelessWidget {
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(12)),
               child: Image.network(
-                news.imageUrl,
+                imageUrl,
                 height: 200,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                // ใส่รูป placeholder สำหรับกรณีโหลดรูปไม่สำเร็จ
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     height: 200,
@@ -103,7 +246,7 @@ class NewsCard extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    news.title,
+                    title,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -112,7 +255,7 @@ class NewsCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   // Content Preview
                   Text(
-                    news.content,
+                    content,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -122,7 +265,7 @@ class NewsCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   // Date
                   Text(
-                    _formatDate(news.publishDate),
+                    publishDate,
                     style: TextStyle(
                       color: Colors.grey[500],
                       fontSize: 12,
@@ -136,18 +279,20 @@ class NewsCard extends StatelessWidget {
       ),
     );
   }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
 }
 
 class NewsDetailPage extends StatelessWidget {
-  final NewsModel news;
+  final String title;
+  final String content;
+  final String imageUrl;
+  final String publishDate;
 
   const NewsDetailPage({
     super.key,
-    required this.news,
+    required this.title,
+    required this.content,
+    required this.imageUrl,
+    required this.publishDate,
   });
 
   @override
@@ -166,9 +311,8 @@ class NewsDetailPage extends StatelessWidget {
             ),
           ),
         ),
-        // เพิ่ม iconTheme เพื่อกำหนดสีของปุ่มย้อนกลับ
         iconTheme: const IconThemeData(
-          color: Colors.white, // กำหนดสีของไอคอนให้เป็นสีขาว
+          color: Colors.white,
         ),
         title: const Text(
           'NEWS DETAIL',
@@ -185,7 +329,7 @@ class NewsDetailPage extends StatelessWidget {
           children: [
             // Image
             Image.network(
-              news.imageUrl,
+              imageUrl,
               height: 250,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -208,7 +352,7 @@ class NewsDetailPage extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    news.title,
+                    title,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -217,7 +361,7 @@ class NewsDetailPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   // Date
                   Text(
-                    _formatDate(news.publishDate),
+                    publishDate,
                     style: TextStyle(
                       color: Colors.grey[500],
                     ),
@@ -225,7 +369,7 @@ class NewsDetailPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   // Content
                   Text(
-                    news.content,
+                    content,
                     style: const TextStyle(
                       fontSize: 16,
                       height: 1.5,
@@ -238,9 +382,5 @@ class NewsDetailPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 }
