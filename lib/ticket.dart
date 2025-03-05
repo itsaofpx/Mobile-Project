@@ -33,6 +33,8 @@ class _TicketState extends State<Ticket> {
         }
       });
     } catch (e) {
+
+      // ignore: avoid_print
       print('Error fetching user email: $e');
       setState(() {
         isLoading = false;
@@ -82,12 +84,18 @@ class _TicketState extends State<Ticket> {
       appBar: AppBar(
         title: const Text("My Ticket", style: TextStyle(color: Colors.black)),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pushNamed(context, '/home');
-          },
-        ),
+        automaticallyImplyLeading: false, 
+        actions: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+            child: IconButton(
+              icon: const Icon(Icons.history, color: Colors.black),
+              onPressed: () {
+                Navigator.pushNamed(context, '/history');
+              },
+            ),
+          ),
+        ],
       ),
 
       body: FutureBuilder<List<QueryDocumentSnapshot>>(
