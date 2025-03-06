@@ -44,7 +44,7 @@ class _PostFeedState extends State<PostFeed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("${_args?['team_name'] ?? 'Team'} Posts")),
+      appBar: AppBar(title: Text("${_args?['team_name'] ?? 'Team'} Posts"),backgroundColor: Colors.white,),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -62,50 +62,53 @@ class _PostFeedState extends State<PostFeed> {
                   ],
                 ),
               )
-              : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextField(
-                      controller: _postController,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        hintText: 'Write a new post...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.send),
-                          onPressed: _createPost,
+              : Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextField(
+                        controller: _postController,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          hintText: 'Write a new post...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.send),
+                            onPressed: _createPost,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child:
-                        _posts != null && _posts!.isNotEmpty
-                            ? ListView.builder(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16.0,
-                              ),
-                              itemCount: _posts!.length,
-                              itemBuilder: (context, index) {
-                                var post = _posts![index].data();
-                                return PostCard(
-                                  userName: post['user_name'] ?? 'Anonymous',
-                                  userImage:
-                                      post['user_image'] ??
-                                      'https://via.placeholder.com/150',
-                                  content: post['content'],
-                                  timestamp: _formatTimestamp(
-                                    post['timestamp'],
-                                  ),
-                                );
-                              },
-                            )
-                            : const Center(child: Text("No posts available")),
-                  ),
-                ],
+                    Expanded(
+                      child:
+                          _posts != null && _posts!.isNotEmpty
+                              ? ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16.0,
+                                ),
+                                itemCount: _posts!.length,
+                                itemBuilder: (context, index) {
+                                  var post = _posts![index].data();
+                                  return PostCard(
+                                    userName: post['user_name'] ?? 'Anonymous',
+                                    userImage:
+                                        post['user_image'] ??
+                                        'https://via.placeholder.com/150',
+                                    content: post['content'],
+                                    timestamp: _formatTimestamp(
+                                      post['timestamp'],
+                                    ),
+                                  );
+                                },
+                              )
+                              : const Center(child: Text("No posts available")),
+                    ),
+                  ],
+                ),
               ),
     );
   }
@@ -209,35 +212,39 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(userImage),
-                  radius: 20,
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  userName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(content),
-            const SizedBox(height: 8),
-            Text(
-              timestamp,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ],
+    return Container(
+      color: Colors.white,
+      child: Card(
+        color: Colors.white,
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        elevation: 3,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(userImage),
+                    radius: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    userName,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(content),
+              const SizedBox(height: 8),
+              Text(
+                timestamp,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
     );

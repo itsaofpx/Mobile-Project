@@ -82,7 +82,7 @@ void _showLoginRequiredDialog() {
               const Icon(
                 Icons.lock_outline, // Use a lock icon
                 size: 48.0,
-                color: Colors.blueGrey, // A subtle color
+                color: Color(0xFF091442), // A subtle color
               ),
               const SizedBox(height: 24.0),
               const Text(
@@ -96,7 +96,7 @@ void _showLoginRequiredDialog() {
               ),
               const SizedBox(height: 16.0),
               const Text(
-                'Please log in to book a ticket.',
+                'Please login to join community.',
                 style: TextStyle(
                   fontSize: 16.0,
                   color: Colors.black54,
@@ -126,7 +126,7 @@ void _showLoginRequiredDialog() {
                       Navigator.pushNamed(context, '/account');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3562A6),
+                      backgroundColor: const Color(0xFF091442),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24.0, vertical: 12.0),
                       shape: RoundedRectangleBorder(
@@ -161,7 +161,7 @@ void _showLoginRequiredDialog() {
     }
     
     return Scaffold(
-      appBar: AppBar(title: const Text("Team Community"), elevation: 0),
+      appBar: AppBar(title: const Text("Team Community"), elevation: 0,backgroundColor: Colors.white,),
       body: StreamBuilder<QuerySnapshot>(
         stream: TeamsApi().getAllTeamsStream(),
         builder: (context, snapshot) {
@@ -177,22 +177,25 @@ void _showLoginRequiredDialog() {
 
           final teamCommunityList = snapshot.data!.docs;
 
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            itemCount: teamCommunityList.length,
-            itemBuilder: (context, index) {
-              var team = teamCommunityList[index];
-              return TeamCard(
-                teamID: team['team_id'],
-                teamName: team['team_name'],
-                teamImage: team['team_image'],
-                userID: userID ?? '',
-                username: username ?? 'User',
-                userImage: userImage ?? '',
-                isLoggedIn: isLoggedIn,
-                onLoginRequired: _showLoginRequiredDialog,
-              );
-            },
+          return Container(
+            color: Colors.white,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              itemCount: teamCommunityList.length,
+              itemBuilder: (context, index) {
+                var team = teamCommunityList[index];
+                return TeamCard(
+                  teamID: team['team_id'],
+                  teamName: team['team_name'],
+                  teamImage: team['team_image'],
+                  userID: userID ?? '',
+                  username: username ?? 'User',
+                  userImage: userImage ?? '',
+                  isLoggedIn: isLoggedIn,
+                  onLoginRequired: _showLoginRequiredDialog,
+                );
+              },
+            ),
           );
         },
       ),
@@ -225,6 +228,7 @@ class TeamCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

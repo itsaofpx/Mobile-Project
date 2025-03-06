@@ -33,7 +33,6 @@ class _TicketState extends State<Ticket> {
         }
       });
     } catch (e) {
-
       // ignore: avoid_print
       print('Error fetching user email: $e');
       setState(() {
@@ -57,6 +56,7 @@ class _TicketState extends State<Ticket> {
 
       return querySnapshot.docs;
     } catch (e) {
+      // ignore: avoid_print
       print('Error fetching tickets: $e');
       return [];
     }
@@ -69,11 +69,84 @@ class _TicketState extends State<Ticket> {
     }
 
     if (userEmail == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text(
-            "Unable to load user email.",
-            style: TextStyle(fontSize: 16, color: Colors.black54),
+      return Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                height: 250,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  // border: Border.all(color: const Color(0xFFEEEEEE), width: 1),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.black.withOpacity(0.05),
+                  //     blurRadius: 10,
+                  //     spreadRadius: 1,
+                  //   ),
+                  // ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 70,),
+                    const Text(
+                      "Please Login to Book",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF091442),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "You need to be logged in to make a booking",
+                      style: TextStyle(fontSize: 16, color: Color(0xFF757575)),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/account');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF091442),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -84,7 +157,7 @@ class _TicketState extends State<Ticket> {
       appBar: AppBar(
         title: const Text("My Ticket", style: TextStyle(color: Colors.black)),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
         actions: [
           Container(
             margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -111,10 +184,81 @@ class _TicketState extends State<Ticket> {
               ),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text(
-                "No tickets available",
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+            return Center(
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
+                      margin: const EdgeInsets.symmetric(horizontal: 24),
+                      height: 250,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),              
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "No Tickets Found",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF091442),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            "You need to booking first",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Color(0xFF757575),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/matchlist',
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF091442),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              elevation: 2,
+                            ),
+                            child: const Text(
+                              "Booking now",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }
@@ -203,9 +347,10 @@ class TicketCard extends StatelessWidget {
     }
 
     return Card(
+      color: Colors.white,
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
+      elevation: 1,
       child: InkWell(
         onTap: () {
           showDialog(
