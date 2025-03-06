@@ -1,26 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:layout/api/teams.dart';
+import 'package:layout/api/user.dart';
+import 'package:layout/model/user_preferences.dart';
 
-class Team extends StatelessWidget {
+class Team extends StatefulWidget {
   const Team({super.key});
+  
+  @override
+  State<Team> createState() => _TeamState();
+}
+
+class _TeamState extends State<Team> {
+  String? userID;
+  String? username;
+  String? userImage;
+  bool isLoading = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+  
+  Future<void> _loadUserData() async {
+    try {
+      final userId = await UserPreferences.getUserId();
+      if (userId == null) {
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+      final userApi = UserApi();
+      final userName = await userApi.getNameByUserID(userId);
+      const defaultImage = 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg';
+      
+      setState(() {
+        userID = userId;
+        username = userName ?? 'User';
+        userImage = defaultImage;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Team Community"),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              _showAddTeamDialog(context);
-            },
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text("Team Community"), elevation: 0),
       body: StreamBuilder<QuerySnapshot>(
-        stream: TeamsApi().getTeamsStream(),
+        stream: TeamsApi().getAllTeamsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -43,68 +84,14 @@ class Team extends StatelessWidget {
                 teamID: team['team_id'],
                 teamName: team['team_name'],
                 teamImage: team['team_image'],
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/teamcommunity',
-                    arguments: {
-                      'team_id': team['team_id'],
-                      'team_name': team['team_name'],
-                      'team_image': team['team_image'],
-                    },
-                  );
-                },
+                userID: userID ?? '',
+                username: username ?? 'User',
+                userImage: userImage ?? '',
               );
             },
           );
         },
       ),
-    );
-  }
-
-  void _showAddTeamDialog(BuildContext context) {
-    final TextEditingController nameController = TextEditingController();
-    final TextEditingController imageController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Add New Team"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: "Team Name"),
-              ),
-              TextField(
-                controller: imageController,
-                decoration: const InputDecoration(labelText: "Team Image URL"),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Add team to Firestore
-                await TeamsApi().addTeam(
-                  teamName: nameController.text,
-                  teamImage: imageController.text,
-                );
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text("Add"),
-            ),
-          ],
-        );
-      },
     );
   }
 }
@@ -113,14 +100,18 @@ class TeamCard extends StatelessWidget {
   final String teamID;
   final String teamName;
   final String teamImage;
-  final VoidCallback onTap;
+  final String userID;
+  final String username;
+  final String userImage;
 
   const TeamCard({
     super.key,
     required this.teamID,
     required this.teamName,
     required this.teamImage,
-    required this.onTap,
+    required this.userID,
+    required this.username,
+    required this.userImage,
   });
 
   @override
@@ -180,7 +171,20 @@ class TeamCard extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             ElevatedButton(
-              onPressed: onTap,
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  '/postFeed',
+                  arguments: {
+                    'team_id': teamID,
+                    'team_name': teamName,
+                    'team_image': teamImage,
+                    'user_id': userID,
+                    'user_name': username,
+                    'user_image': userImage,
+                  },
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF091442),
                 foregroundColor: Colors.white,
