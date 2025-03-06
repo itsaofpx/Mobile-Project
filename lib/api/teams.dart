@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class TeamsApi {
   final CollectionReference team = FirebaseFirestore.instance.collection('teams');
 
-  Stream<QuerySnapshot> getTeamsStream() {
+  Stream<QuerySnapshot> getAllTeamsStream() {
     return team.orderBy('team_id', descending: false).snapshots();
   }
 
