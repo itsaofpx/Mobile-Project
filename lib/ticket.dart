@@ -57,6 +57,7 @@ class _TicketState extends State<Ticket> {
 
       return querySnapshot.docs;
     } catch (e) {
+      // ignore: avoid_print
       print('Error fetching tickets: $e');
       return [];
     }
