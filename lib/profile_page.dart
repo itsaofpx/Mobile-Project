@@ -132,20 +132,9 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: const Text(
           'Profile',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF091442),
-                Color(0xFF3562A6),
-              ],
-            ),
-          ),
-        ),
+        backgroundColor: Colors.white,
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
