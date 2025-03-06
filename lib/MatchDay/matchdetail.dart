@@ -70,6 +70,7 @@ void _showLoginRequiredDialog() {
         elevation: 8.0, // Add a shadow
         backgroundColor: Colors.white,
         child: Container(
+          
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min, // Important for wrapping content
@@ -79,7 +80,7 @@ void _showLoginRequiredDialog() {
               const Icon(
                 Icons.lock_outline, // Use a lock icon
                 size: 48.0,
-                color: Colors.blueGrey, // A subtle color
+                color: Color(0xFF091442), // A subtle color
               ),
               const SizedBox(height: 24.0),
               const Text(
@@ -93,7 +94,7 @@ void _showLoginRequiredDialog() {
               ),
               const SizedBox(height: 16.0),
               const Text(
-                'Please log in to book a ticket.',
+                'Please login to book a ticket.',
                 style: TextStyle(
                   fontSize: 16.0,
                   color: Colors.black54,
@@ -123,7 +124,7 @@ void _showLoginRequiredDialog() {
                       Navigator.pushNamed(context, '/account');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3562A6),
+                      backgroundColor: const Color(0xFF091442),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 24.0, vertical: 12.0),
                       shape: RoundedRectangleBorder(
@@ -161,84 +162,87 @@ void _showLoginRequiredDialog() {
         elevation: 0,
         centerTitle: true,
       ),
-      body: ListView(
-        children: [
-          // Stadium Image Card
-          const StadiumCard(),
-
-          // Match Title Card
-          Container(
-            margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  spreadRadius: 2,
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Text(
-                  widget.title,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+      body: Container(
+        color: Colors.white,
+        child: ListView(
+          children: [
+            // Stadium Image Card
+            const StadiumCard(),
+        
+            // Match Title Card
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade200,
+                    spreadRadius: 2,
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Match ID: ${widget.matchId}",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    widget.title,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Text(
+                    "Match ID: ${widget.matchId}",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-
-          // Match Info Card
-          MatchInfoCard(
-            leagueName: widget.leagueName,
-            matchDate: widget.matchDate,
-            matchTime: widget.matchTime,
-            stadiumName: widget.stadiumName,
-            description: widget.description,
-          ),
-
-          // Zone Cards
-          ZoneCard(
-            zone: "North Zone A",
-            price: widget.zoneAprice,
-            seatleft: widget.zoneAseate,            
-            onTap: () => _handleZoneSelection("A", widget.zoneAprice),
-          ),
-          ZoneCard(
-            zone: "South Zone B",
-            seatleft: widget.zoneBseate,            
-            price: widget.zoneBprice,            
-            onTap: () => _handleZoneSelection("B", widget.zoneBprice),
-          ),
-          ZoneCard(
-            zone: "West Zone C",
-            seatleft: widget.zoneCseate,            
-            price: widget.zoneCprice,            
-            onTap: () => _handleZoneSelection("C", widget.zoneCprice),
-          ),
-          ZoneCard(
-            zone: "East Zone D",
-            seatleft: widget.zoneDseate,            
-            price: widget.zoneDprice,            
-            onTap: () => _handleZoneSelection("D", widget.zoneDprice),
-          ),
-        ],
+        
+            // Match Info Card
+            MatchInfoCard(
+              leagueName: widget.leagueName,
+              matchDate: widget.matchDate,
+              matchTime: widget.matchTime,
+              stadiumName: widget.stadiumName,
+              description: widget.description,
+            ),
+        
+            // Zone Cards
+            ZoneCard(
+              zone: "North Zone A",
+              price: widget.zoneAprice,
+              seatleft: widget.zoneAseate,            
+              onTap: () => _handleZoneSelection("A", widget.zoneAprice),
+            ),
+            ZoneCard(
+              zone: "South Zone B",
+              seatleft: widget.zoneBseate,            
+              price: widget.zoneBprice,            
+              onTap: () => _handleZoneSelection("B", widget.zoneBprice),
+            ),
+            ZoneCard(
+              zone: "West Zone C",
+              seatleft: widget.zoneCseate,            
+              price: widget.zoneCprice,            
+              onTap: () => _handleZoneSelection("C", widget.zoneCprice),
+            ),
+            ZoneCard(
+              zone: "East Zone D",
+              seatleft: widget.zoneDseate,            
+              price: widget.zoneDprice,            
+              onTap: () => _handleZoneSelection("D", widget.zoneDprice),
+            ),
+          ],
+        ),
       ),
     );
   }

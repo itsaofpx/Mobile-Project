@@ -18,7 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = true;
 
   static const Color deeperBlue = Color(0xFF091442);
-  static const Color mediumBlue = Color(0xFF3562A6);
+  static const Color mediumBlue = Color(0xFF091442);
 
   @override
   void initState() {
@@ -149,7 +149,9 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Container(
+            color: Colors.white,
+            child: const Center(child: CircularProgressIndicator()))
           : Container(
               width: double.infinity,
               height: double.infinity,

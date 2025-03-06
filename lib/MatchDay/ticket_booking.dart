@@ -40,28 +40,31 @@ class _TicketBookingState extends State<TicketBooking> {
         title: const Text('Ticket Booking'),
         backgroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ZoneInfoCard(zone: widget.zone, price: widget.price , matchId: widget.matchId, title: widget.title),
-            const SizedBox(height: 30),
-            QuantitySelector(
-              quantity: quantity,
-              onChanged: (value) => setState(() => quantity = value),
-            ),
-            const SizedBox(height: 20),
-            TotalPriceCard(total: widget.price * quantity),
-            const Spacer(),
-            ConfirmBookingButton(
-              onPressed: () => _showConfirmationDialog(context),
-              zone: widget.zone,
-              quantity: quantity,
-              price: widget.price,
-
-            ),
-          ],
+      body: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ZoneInfoCard(zone: widget.zone, price: widget.price , matchId: widget.matchId, title: widget.title),
+              const SizedBox(height: 30),
+              QuantitySelector(
+                quantity: quantity,
+                onChanged: (value) => setState(() => quantity = value),
+              ),
+              const SizedBox(height: 20),
+              TotalPriceCard(total: widget.price * quantity),
+              const Spacer(),
+              ConfirmBookingButton(
+                onPressed: () => _showConfirmationDialog(context),
+                zone: widget.zone,
+                quantity: quantity,
+                price: widget.price,
+        
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -318,6 +321,7 @@ class BookingConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
