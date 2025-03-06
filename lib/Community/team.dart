@@ -16,11 +16,20 @@ class _TeamState extends State<Team> {
   String? username;
   String? userImage;
   bool isLoading = true;
+  bool isLoggedIn = false;
   
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _checkAuthAndLoadData();
+  }
+
+  Future<void> _checkAuthAndLoadData() async {
+    final loggedIn = await UserPreferences.isLoggedIn();
+    setState(() {
+      isLoggedIn = loggedIn;
+    });
+    await _loadUserData();
   }
   
   Future<void> _loadUserData() async {
@@ -43,12 +52,105 @@ class _TeamState extends State<Team> {
         isLoading = false;
       });
     } catch (e) {
+      // ignore: avoid_print
       print('Error loading user data: $e');
       setState(() {
         isLoading = false;
       });
     }
   }
+
+
+void _showLoginRequiredDialog() {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevent dismissing by tapping outside
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0), // Rounded corners
+        ),
+        elevation: 8.0, // Add a shadow
+        backgroundColor: Colors.white,
+        child: Container(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Important for wrapping content
+            crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch buttons
+            children: [
+              const SizedBox(height: 24.0),
+              const Icon(
+                Icons.lock_outline, // Use a lock icon
+                size: 48.0,
+                color: Colors.blueGrey, // A subtle color
+              ),
+              const SizedBox(height: 24.0),
+              const Text(
+                'Login Required',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16.0),
+              const Text(
+                'Please log in to book a ticket.',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end, // Align buttons to the right
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16.0), // Add spacing between buttons
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, '/account');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3562A6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0, vertical: 12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
   
   @override
   Widget build(BuildContext context) {
@@ -87,6 +189,8 @@ class _TeamState extends State<Team> {
                 userID: userID ?? '',
                 username: username ?? 'User',
                 userImage: userImage ?? '',
+                isLoggedIn: isLoggedIn,
+                onLoginRequired: _showLoginRequiredDialog,
               );
             },
           );
@@ -103,6 +207,8 @@ class TeamCard extends StatelessWidget {
   final String userID;
   final String username;
   final String userImage;
+  final bool isLoggedIn;
+  final VoidCallback onLoginRequired;
 
   const TeamCard({
     super.key,
@@ -112,6 +218,8 @@ class TeamCard extends StatelessWidget {
     required this.userID,
     required this.username,
     required this.userImage,
+    required this.isLoggedIn,
+    required this.onLoginRequired,
   });
 
   @override
@@ -172,18 +280,22 @@ class TeamCard extends StatelessWidget {
             const SizedBox(width: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/postFeed',
-                  arguments: {
-                    'team_id': teamID,
-                    'team_name': teamName,
-                    'team_image': teamImage,
-                    'user_id': userID,
-                    'user_name': username,
-                    'user_image': userImage,
-                  },
-                );
+                if (isLoggedIn) {
+                  Navigator.pushNamed(
+                    context,
+                    '/postFeed',
+                    arguments: {
+                      'team_id': teamID,
+                      'team_name': teamName,
+                      'team_image': teamImage,
+                      'user_id': userID,
+                      'user_name': username,
+                      'user_image': userImage,
+                    },
+                  );
+                } else {
+                  onLoginRequired();
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF091442),
