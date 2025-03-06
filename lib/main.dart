@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:layout/Admin/ManageTeams/manage_teams.dart';
 import 'package:layout/Admin/ManageUsers/manage_users.dart';
 import 'package:layout/Admin/ManageUsers/match.dart';
 import 'package:layout/Admin/admin.dart';
 import 'package:layout/Auth/login.dart';
 import 'package:layout/Auth/sign_up.dart';
 import 'package:layout/Community/team.dart';
-import 'package:layout/Community/team_community.dart';
+import 'package:layout/Community/team_post.dart';
 import 'package:layout/MatchDay/listmatch.dart';
 import 'package:layout/News/newslist.dart';
 import 'package:layout/News/addNews.dart';
@@ -46,13 +47,15 @@ class MyApp extends StatelessWidget {
         '/account': (context) => const Account(),
         '/matchlist': (context) => MatchListScreen(),
         '/community' : (context) => const Team(),
-        '/teamcommunity': (context) => const TeamCommunity(),
+        // '/community/teamcommunity': (context) => const TeamCommunity(),
         '/newslist': (context) => const NewsListPage(),
         '/admin': (context) => const AdminHomePage(),
         '/admin/users': (context) => const AdminUsersPage(),
         '/admin/match': (context) => const AddMatchScreen(),
         '/history': (context) =>  HistoryPage(),
         '/admin/addnews': (context) => const AddNewsPage(),
+        '/admin/teams': (context) => const AdminTeamsPage(),
+        '/postFeed': (context) => const PostFeed(),
       },
     );
   }

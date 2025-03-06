@@ -84,4 +84,26 @@ class UserApi {
       return false;
     }
   }
+
+  Future<String?> getNameByUserID(String userId) async {
+  try {
+    QuerySnapshot querySnapshot = await user
+        .where("user_id", isEqualTo: userId.trim())
+        .limit(1)
+        .get();
+    
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot document = querySnapshot.docs.first;
+      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+      return data['user_name'];
+    } else {
+      print('No user found with ID: $userId');
+      return null;
+    }
+  } catch (e) {
+    print('Error getting user name: ${e.toString()}');
+    return null;
+  }
 }
+}
+
