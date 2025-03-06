@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:layout/api/teams/ticket.dart'; // นำเข้าคลาส TicketsApi
+import 'package:layout/api/ticket.dart'; // นำเข้าคลาส TicketsApi
 
 class HistoryPage extends StatelessWidget {
   HistoryPage({Key? key}) : super(key: key);

@@ -113,29 +113,16 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Profile',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF091442),
-                Color(0xFF3562A6),
-              ],
-            ),
-          ),
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        title: const Text("Profile", style: TextStyle(color: Colors.black)),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        automaticallyImplyLeading: false, 
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: _handleLogout,
+          Container(
+            margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+            child: IconButton(
+              icon: const Icon(Icons.logout, color: Colors.black),
+              onPressed: _handleLogout,
+            ),
           ),
         ],
       ),
