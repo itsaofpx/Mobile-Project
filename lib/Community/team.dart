@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:layout/api/teams/teams.dart';
+import 'package:layout/api/teams.dart';
 
 class Team extends StatelessWidget {
   const Team({super.key});

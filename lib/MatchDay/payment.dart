@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:layout/api/teams/matchday.dart'; // นำเข้าคลาส TicketsApi
-import 'package:layout/api/teams/ticket.dart'; // นำเข้าคลาส TicketsApi
+import 'package:layout/api/matchday.dart'; // นำเข้าคลาส TicketsApi
+import 'package:layout/api/ticket.dart'; // นำเข้าคลาส TicketsApi
 
 class Payment extends StatelessWidget {
   final String matchId;
