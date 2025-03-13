@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:layout/Admin/ManageTeams/manage_teams.dart';
 import 'package:layout/Admin/ManageUsers/manage_users.dart';
-import 'package:layout/Admin/ManageUsers/match.dart';
+import 'package:layout/Admin/ManageTicket/ManageTicket.dart';
+import 'package:layout/Admin/ManageMatch/match.dart';
 import 'package:layout/Admin/admin.dart';
 import 'package:layout/Auth/login.dart';
 import 'package:layout/Auth/sign_up.dart';
@@ -56,6 +57,8 @@ class MyApp extends StatelessWidget {
         '/admin/addnews': (context) => const AddNewsPage(),
         '/admin/teams': (context) => const AdminTeamsPage(),
         '/postFeed': (context) => const PostFeed(),
+        '/admin/ticket': (context) => const AdminTicketsPage(),
+        
       },
     );
   }

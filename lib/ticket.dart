@@ -15,11 +15,25 @@ class _TicketState extends State<Ticket> {
   String? userEmail;
   bool isLoading = true;
   Future<List<QueryDocumentSnapshot>>? ticketFuture;
+  TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
+  
+  // เพิ่มตัวแปรสำหรับการกรอง
+  String filterBy = 'all'; // 'all', 'title', 'date'
+  List<String> uniqueTitles = [];
+  String selectedTitle = '';
+  DateTime? selectedDate;
 
   @override
   void initState() {
     super.initState();
     _loadUserEmail();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUserEmail() async {
@@ -50,16 +64,112 @@ class _TicketState extends State<Ticket> {
           await FirebaseFirestore.instance
               .collection('tickets')
               .where('ticket_useremail', isEqualTo: email)
-              .where('ticket_date', isGreaterThan: formattedNow)
+              .where('ticket_date', isGreaterThanOrEqualTo: formattedNow)
               .orderBy('ticket_date', descending: false)
               .get();
+      
+      // ดึงรายการ title ที่ไม่ซ้ำกันเพื่อใช้ในตัวกรอง
+      final docs = querySnapshot.docs;
+      final titles = docs.map((doc) {
+      final data = doc.data();
+      return data['ticket_title'] as String;
+      }).toSet().toList();
+      
+      setState(() {
+        uniqueTitles = titles;
+      });
 
-      return querySnapshot.docs;
+      return docs;
     } catch (e) {
       // ignore: avoid_print
       print('Error fetching tickets: $e');
       return [];
     }
+  }
+
+  // แสดงตัวเลือกสำหรับกรองตาม title
+  void _showTitleFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Select Your Match Title' ,),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: uniqueTitles.length + 1, // +1 สำหรับตัวเลือก "ทั้งหมด"
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return ListTile(
+                    title: const Text('Show All'),
+                    onTap: () {
+                      setState(() {
+                        selectedTitle = '';
+                        filterBy = 'all';
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                }
+                
+                final title = uniqueTitles[index - 1];
+                return ListTile(
+                  title: Text(title),
+                  onTap: () {
+                    setState(() {
+                      selectedTitle = title;
+                      filterBy = 'title';
+                    });
+                    Navigator.pop(context);
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // แสดงตัวเลือกสำหรับกรองตามวันที่
+  void _showDateFilterDialog() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF3562A6),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    
+    if (pickedDate != null) {
+      setState(() {
+        selectedDate = pickedDate;
+        filterBy = 'date';
+      });
+    }
+  }
+
+  // ล้างตัวกรองทั้งหมด
+  void _clearFilters() {
+    setState(() {
+      filterBy = 'all';
+      selectedTitle = '';
+      selectedDate = null;
+      searchController.clear();
+      searchQuery = '';
+    });
   }
 
   @override
@@ -77,7 +187,6 @@ class _TicketState extends State<Ticket> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -88,21 +197,12 @@ class _TicketState extends State<Ticket> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  // border: Border.all(color: const Color(0xFFEEEEEE), width: 1),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Colors.black.withOpacity(0.05),
-                  //     blurRadius: 10,
-                  //     spreadRadius: 1,
-                  //   ),
-                  // ],
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 70,),
+                    const SizedBox(height: 70,),
                     const Text(
                       "Please Login to Book",
                       style: TextStyle(
@@ -171,138 +271,408 @@ class _TicketState extends State<Ticket> {
         ],
       ),
 
-      body: FutureBuilder<List<QueryDocumentSnapshot>>(
-        future: ticketFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text(
-                "Error loading tickets.",
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        children: [
+          // ช่องค้นหาและปุ่มฟิลเตอร์
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Row(
+              children: [
+                // ช่องค้นหา
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search Ticket...',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                setState(() {
+                                  searchController.clear();
+                                  searchQuery = '';
+                                });
+                              },
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value.toLowerCase();
+                      });
+                    },
+                  ),
+                ),
+                
+                // ปุ่มฟิลเตอร์
+                IconButton(
+                  icon: const Icon(Icons.filter_list),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      builder: (context) {
+                        return Container(
+                          padding: const EdgeInsets.all(20),                          
+                          color: Colors.white,
+                          child: Column(                            
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Fillter',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              
+                              // กรองตามชื่อการแข่งขัน
+                              ListTile(
+                                leading: const Icon(Icons.sports_soccer),
+                                title: const Text('By Match Title'),
+                                subtitle: selectedTitle.isNotEmpty 
+                                    ? Text(selectedTitle) 
+                                    : null,
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _showTitleFilterDialog();
+                                },
+                              ),
+                              
+                              // กรองตามวันที่
+                              ListTile(
+                                leading: const Icon(Icons.calendar_today),
+                                title: const Text('By Date time'),
+                                subtitle: selectedDate != null 
+                                    ? Text(DateFormat('dd/MM/yyyy').format(selectedDate!)) 
+                                    : null,
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  _showDateFilterDialog();
+                                },
+                              ),
+                              
+                              const SizedBox(height: 10),
+                              
+                              // ปุ่มล้างตัวกรอง
+                              if (filterBy != 'all' || searchQuery.isNotEmpty)
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      _clearFilters();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red[400],
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    child: const Text('ล้างตัวกรอง'),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          
+          // แสดงตัวกรองที่ใช้อยู่
+          if (filterBy != 'all' || searchQuery.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
                   children: [
-                    
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 16,
+                    if (searchQuery.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Chip(
+                          backgroundColor: Colors.white,
+                          label: Text('Search: $searchQuery'),
+                          deleteIcon: const Icon(Icons.close, size: 18),
+                          onDeleted: () {
+                            setState(() {
+                              searchController.clear();
+                              searchQuery = '';
+                            });
+                          },
+                        ),
                       ),
-                      margin: const EdgeInsets.symmetric(horizontal: 24),
-                      height: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),              
+                    if (filterBy == 'title' && selectedTitle.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Chip(
+                          backgroundColor: Colors.white,
+                          label: Text('Match: $selectedTitle'),
+                          deleteIcon: const Icon(Icons.close, size: 18),
+                          onDeleted: () {
+                            setState(() {
+                              selectedTitle = '';
+                              filterBy = 'all';
+                            });
+                          },
+                        ),
                       ),
+                    if (filterBy == 'date' && selectedDate != null)
+                      Chip(                      
+                        backgroundColor: Colors.white, // หรือใช้ Colors.red.withOpacity(0
+                        label: Text('Date Before: ${DateFormat('dd/MM/yyyy').format(selectedDate!)}'),
+                        deleteIcon: const Icon(Icons.close, size: 18),
+                        onDeleted: () {
+                          setState(() {
+                            selectedDate = null;
+                            filterBy = 'all';
+                          });
+                        },
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
+          // แสดงรายการตั๋ว
+          Expanded(
+            child: FutureBuilder<List<QueryDocumentSnapshot>>(
+              future: ticketFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(
+                    child: Text(
+                      "Error loading tickets.",
+                      style: TextStyle(fontSize: 16, color: Colors.black54),
+                    ),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.white,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
-                            "No Tickets Found",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF091442),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 16,
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            "You need to booking first",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Color(0xFF757575),
+                            margin: const EdgeInsets.symmetric(horizontal: 24),
+                            height: 250,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),              
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                '/matchlist',
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF091442),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 32,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              elevation: 2,
-                            ),
-                            child: const Text(
-                              "Booking now",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "No Tickets Found",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF091442),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  "You need to booking first",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xFF757575),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/matchlist',
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF091442),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 32,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  child: const Text(
+                                    "Booking now",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          final tickets = snapshot.data!;
-
-          final filteredTickets =
-              tickets.where((ticket) {
-                final ticketDateString = ticket['ticket_date'] as String;
-                try {
-                  final ticketDate = DateFormat(
-                    'yyyy-MM-dd',
-                  ).parse(ticketDateString);
-
-                  final now = DateTime.now();
-                  final today = DateTime(now.year, now.month, now.day);
-
-                  return (ticketDate.isAtSameMomentAs(today) ||
-                      ticketDate.isAfter(today));
-                } catch (e) {
-                  return false;
+                  );
                 }
-              }).toList();
 
-          if (filteredTickets.isEmpty) {
-            return const Center(
-              child: Text(
-                "No tickets available",
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            );
-          }
+                // กรองและเรียงลำดับตั๋วตามวันที่
+                final tickets = snapshot.data!;
+                
+                // กรองตั๋วที่มีวันที่ตั้งแต่วันนี้เป็นต้นไป และตามเงื่อนไขการกรอง
+                final filteredTickets = tickets.where((ticket) {
+                  final ticketData = ticket.data() as Map<String, dynamic>;
+                  final ticketDateString = ticketData['ticket_date'] as String;
+                  final title = ticketData['ticket_title'].toString();
+                  
+                  // ตรวจสอบว่าเป็นวันที่ปัจจุบันหรืออนาคต
+                  if (!_isUpcomingOrToday(ticketDateString)) {
+                    return false;
+                  }
+                  
+                  // กรองตามคำค้นหา
+                  if (searchQuery.isNotEmpty) {
+                    final titleLower = title.toLowerCase();
+                    final stadium = ticketData['ticket_stadium'].toString().toLowerCase();
+                    final ticketId = ticketData['ticket_id'].toString().toLowerCase();
+                    
+                    if (!(titleLower.contains(searchQuery) || 
+                         stadium.contains(searchQuery) || 
+                         ticketId.contains(searchQuery))) {
+                      return false;
+                    }
+                  }
+                  
+                  // กรองตาม title
+                  if (filterBy == 'title' && selectedTitle.isNotEmpty) {
+                    if (title != selectedTitle) {
+                      return false;
+                    }
+                  }
+                  
+                  // กรองตามวันที่
+                if (filterBy == 'date' && selectedDate != null) {
+                  final ticketDate = DateFormat('yyyy-MM-dd').parse(ticketDateString);
+                  final filterDate = DateTime(
+                    selectedDate!.year, 
+                    selectedDate!.month, 
+                    selectedDate!.day
+                  );
+                  
+                  // แก้ไขจากเดิมที่เช็คว่าเป็นวันเดียวกัน เป็นเช็คว่าวันที่ของตั๋วมาก่อนหรือเท่ากับวันที่เลือก
+                  if (ticketDate.isAfter(filterDate)) {
+                    return false;
+                  }
+                }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(20),
-            itemCount: filteredTickets.length,
-            itemBuilder: (context, index) {
-              final ticket = filteredTickets[index];
-              return TicketCard(ticket: ticket);
-            },
-          );
-        },
+                  
+                  return true;
+                }).toList();
+                
+                // เรียงลำดับตั๋วตามวันที่ (ใกล้สุดอยู่บนสุด)
+                filteredTickets.sort((a, b) {
+                  final aData = a.data() as Map<String, dynamic>;
+                  final bData = b.data() as Map<String, dynamic>;
+                  
+                  final aDate = DateFormat('yyyy-MM-dd').parse(aData['ticket_date']);
+                  final bDate = DateFormat('yyyy-MM-dd').parse(bData['ticket_date']);
+                  
+                  return aDate.compareTo(bDate);
+                });
+
+                if (filteredTickets.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.filter_alt_off,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          filterBy != 'all' || searchQuery.isNotEmpty
+                              ? "ไม่พบตั๋วที่ตรงกับเงื่อนไขการกรอง"
+                              : "ไม่มีตั๋วที่กำลังจะมาถึง",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        if (filterBy != 'all' || searchQuery.isNotEmpty)
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.refresh),
+                            label: const Text("ล้างตัวกรอง"),
+                            onPressed: _clearFilters,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[400],
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(20),
+                  itemCount: filteredTickets.length,
+                  itemBuilder: (context, index) {
+                    final ticket = filteredTickets[index];
+                    return TicketCard(ticket: ticket);
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
+  }
+  
+  // ฟังก์ชันตรวจสอบว่าวันที่เป็นวันนี้หรือวันในอนาคตหรือไม่
+  bool _isUpcomingOrToday(String dateString) {
+    try {
+      final ticketDate = DateFormat('yyyy-MM-dd').parse(dateString);
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      
+      return ticketDate.isAtSameMomentAs(today) || ticketDate.isAfter(today);
+    } catch (e) {
+      return false;
+    }
   }
 }
 

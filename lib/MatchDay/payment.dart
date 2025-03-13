@@ -37,7 +37,6 @@ class Payment extends StatelessWidget {
       body: Container(
         color: Colors.white,
         child: SingleChildScrollView(
-          
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -106,9 +105,9 @@ class Payment extends StatelessWidget {
                     ],
                   ),
                 ),
-        
+
                 const SizedBox(height: 20),
-        
+
                 // Order Summary
                 Container(
                   padding: const EdgeInsets.all(15),
@@ -164,9 +163,9 @@ class Payment extends StatelessWidget {
                     ],
                   ),
                 ),
-        
+
                 const SizedBox(height: 30),
-        
+
                 // QR Code Section
                 Container(
                   width: double.infinity,
@@ -218,9 +217,9 @@ class Payment extends StatelessWidget {
                     ],
                   ),
                 ),
-        
+
                 const SizedBox(height: 30),
-        
+
                 // Payment Instructions
                 Container(
                   padding: const EdgeInsets.all(15),
@@ -249,9 +248,9 @@ class Payment extends StatelessWidget {
                     ],
                   ),
                 ),
-        
+
                 const SizedBox(height: 30),
-        
+
                 // Confirm Payment Button
                 SizedBox(
                   width: double.infinity,
@@ -259,7 +258,7 @@ class Payment extends StatelessWidget {
                     onPressed: () async {
                       final TicketsApi ticketsApi = TicketsApi();
                       final MatchdayApi matchdayApi = MatchdayApi();
-        
+
                       try {
                         // สร้างตั๋วตามจำนวนที่ผู้ใช้เลือก
                         for (int i = 0; i < quantity; i++) {
@@ -271,89 +270,99 @@ class Payment extends StatelessWidget {
                             time: matchTime,
                           );
                         }
-        
+
                         // อัปเดตจำนวนที่นั่งในโซน
                         await matchdayApi.updateZoneSeats(
                           matchId: matchId,
                           zone: zone,
                           ticketCount: quantity,
                         );
-        
+
+                        // แก้ไขส่วนของ showDialog ในปุ่ม Confirm Payment
                         showDialog(
                           context: context,
+                          barrierDismissible:
+                              false, // ป้องกันการปิดโดยการแตะนอกกล่อง
                           builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              title: const Row(
-                                children: [
-                                  Icon(Icons.check_circle, color: Colors.green),
-                                   SizedBox(width: 10),
-                                   Text(
-                                    'Payment Successful',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Thank you for your payment!',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    'Match: $title',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Match ID: $matchId',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    'E-tickets will be sent to your myticket page.',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(context, '/home');
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: Colors.green,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'OK',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
+                            return WillPopScope(
+                              onWillPop:
+                                  () async => false, // ป้องกันการกดปุ่มย้อนกลับ
+                              child: AlertDialog(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
-                              ],
+                                title: const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Payment Successful',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Thank you for your payment!',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      'Match: $title',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Match ID: $matchId',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      'E-tickets will be sent to your myticket page.',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, '/home');
+                                    },
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: Colors.green,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'OK',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           },
                         );
@@ -378,7 +387,7 @@ class Payment extends StatelessWidget {
                         );
                       }
                     },
-        
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       padding: const EdgeInsets.symmetric(vertical: 15),
