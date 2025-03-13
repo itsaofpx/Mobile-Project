@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
+import 'package:layout/api/user.dart';
 import 'package:layout/model/user_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -12,10 +14,11 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String? email;
   String? userId;
+  String? userName;
   bool isLoading = true;
 
   static const Color deeperBlue = Color(0xFF091442);
-  static const Color mediumBlue = Color(0xFF3562A6);
+  static const Color mediumBlue = Color(0xFF091442);
 
   @override
   void initState() {
@@ -36,19 +39,33 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       final userEmail = await UserPreferences.getEmail();
       final userIdFromPrefs = await UserPreferences.getUserId();
-
+      
+      // Fetch additional user data from Firestore
+      String? name;
+      if (userIdFromPrefs != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userIdFromPrefs)
+            .get();
+            
+        final userApiInstance = UserApi();
+        final nameFromApi = await userApiInstance.getNameByUserID(userIdFromPrefs);
+        name = nameFromApi ?? userDoc.get('user_name');
+      }
+      
       if (mounted) {
         setState(() {
           email = userEmail;
           userId = userIdFromPrefs;
+          userName = name;
           isLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error loading user data'),
+          SnackBar(
+            content: Text('Error loading user data: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -72,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.pop(context); // ปิด dialog
+              Navigator.pop(context); // Close dialog
               await _performLogout();
             },
             child: const Text(
@@ -113,9 +130,14 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile", style: TextStyle(color: Colors.black)),
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        automaticallyImplyLeading: false, 
+        title: const Text(
+          'Profile',
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
         actions: [
           Container(
             margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -127,7 +149,9 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Container(
+            color: Colors.white,
+            child: const Center(child: CircularProgressIndicator()))
           : Container(
               width: double.infinity,
               height: double.infinity,
@@ -158,12 +182,21 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       const SizedBox(height: 30),
+                      // Display user name
+                      _buildInfoCard(
+                        title: 'Name',
+                        content: userName ?? 'Not available',
+                        icon: Icons.person,
+                      ),
+                      const SizedBox(height: 16),
+                      // Display email
                       _buildInfoCard(
                         title: 'Email',
                         content: email ?? 'Not available',
                         icon: Icons.email,
                       ),
                       const SizedBox(height: 16),
+                      // Display user ID
                       _buildInfoCard(
                         title: 'User ID',
                         content: userId ?? 'Not available',
@@ -171,19 +204,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       const SizedBox(height: 40),
                       ElevatedButton.icon(
-                        icon: const Icon(
-                          Icons.logout,
-                          color: Colors.white,
-                          size: 25,
-                        ),
-                        label: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
+                        icon: const Icon(Icons.logout, color: Colors.white, size: 25),
+                        label: const Text('Logout', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 40,

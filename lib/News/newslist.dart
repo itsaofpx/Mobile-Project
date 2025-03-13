@@ -9,41 +9,9 @@ class NewsListPage extends StatelessWidget {
     final newsCollection = FirebaseFirestore.instance.collection('news');
 
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF091442),
-                Color(0xFF3562A6),
-              ],
-            ),
-          ),
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-        title: const Text(
-          'NEWS',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AddNewsDialog(),
-              );
-            },
-          ),
-        ],
+       appBar: AppBar(
+        title: const Text("News", style: TextStyle(color: Colors.black)),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),        
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: newsCollection.orderBy('news_time', descending: true).snapshots(),
@@ -60,18 +28,21 @@ class NewsListPage extends StatelessWidget {
 
           final newsDocs = snapshot.data!.docs;
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: newsDocs.length,
-            itemBuilder: (context, index) {
-              final news = newsDocs[index];
-              return NewsCard(
-                title: news['news_title'],
-                content: news['news_content'],
-                imageUrl: news['news_url'],
-                publishDate: news['news_time'],
-              );
-            },
+          return Container(
+            color: Colors.white,
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: newsDocs.length,
+              itemBuilder: (context, index) {
+                final news = newsDocs[index];
+                return NewsCard(
+                  title: news['news_title'],
+                  content: news['news_content'],
+                  imageUrl: news['news_url'],
+                  publishDate: news['news_time'],
+                );
+              },
+            ),
           );
         },
       ),
@@ -195,6 +166,7 @@ class NewsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
       margin: const EdgeInsets.only(bottom: 16),
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -296,89 +268,74 @@ class NewsDetailPage extends StatelessWidget {
   });
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF091442),
-                Color(0xFF3562A6),
-              ],
-            ),
-          ),
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-        title: const Text(
-          'NEWS DETAIL',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        elevation: 0,
+        title: Text(title, style: const TextStyle(color: Colors.black)),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),        
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image
-            Image.network(
-              imageUrl,
-              height: 250,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 250,
-                  color: Colors.grey[300],
-                  child: const Icon(
-                    Icons.image_not_supported,
-                    size: 50,
-                    color: Colors.grey,
-                  ),
-                );
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image
+              const SizedBox(height: 30,),
+              Image.network(
+                imageUrl,
+                height: 250,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 250,
+                    color: Colors.grey[300],
+                    child: const Icon(
+                      Icons.image_not_supported,
+                      size: 50,
+                      color: Colors.grey,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  // Date
-                  Text(
-                    publishDate,
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // Content
-                  Text(
-                    content,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Date
+                    Text(
+                      publishDate,
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Content
+                    Text(
+                      content,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

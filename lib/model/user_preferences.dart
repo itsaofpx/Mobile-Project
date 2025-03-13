@@ -16,7 +16,6 @@ class UserPreferences {
     await prefs.setString(_keyUserId, userId);
   }
 
-  // เช็คสถานะการล็อกอิน
   static Future<bool> isLoggedIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_keyIsLoggedIn) ?? false;

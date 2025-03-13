@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:layout/model/user_preferences.dart'; // เพิ่ม import นี้
 import 'ticket_booking.dart';
 
 class MatchDetail extends StatefulWidget {
@@ -18,8 +19,6 @@ class MatchDetail extends StatefulWidget {
   final int zoneCseate;
   final int zoneDseate;
   
-
-
   const MatchDetail({
     super.key,
     required this.matchId,
@@ -44,6 +43,113 @@ class MatchDetail extends StatefulWidget {
 }
 
 class _MatchDetailState extends State<MatchDetail> {
+  bool isLoggedIn = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final loggedIn = await UserPreferences.isLoggedIn();
+    setState(() {
+      isLoggedIn = loggedIn;
+    });
+  }
+
+void _showLoginRequiredDialog() {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevent dismissing by tapping outside
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0), // Rounded corners
+        ),
+        elevation: 8.0, // Add a shadow
+        backgroundColor: Colors.white,
+        child: Container(
+          
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Important for wrapping content
+            crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch buttons
+            children: [
+              const SizedBox(height: 24.0),
+              const Icon(
+                Icons.lock_outline, // Use a lock icon
+                size: 48.0,
+                color: Color(0xFF091442), // A subtle color
+              ),
+              const SizedBox(height: 24.0),
+              const Text(
+                'Login Required',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16.0),
+              const Text(
+                'Please login to book a ticket.',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end, // Align buttons to the right
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16.0), // Add spacing between buttons
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, '/account');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF091442),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0, vertical: 12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,86 +162,97 @@ class _MatchDetailState extends State<MatchDetail> {
         elevation: 0,
         centerTitle: true,
       ),
-      body: ListView(
-        children: [
-          // Stadium Image Card
-          const StadiumCard(),
-
-          // Match Title Card
-          Container(
-            margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  spreadRadius: 2,
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Text(
-                  widget.title,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+      body: Container(
+        color: Colors.white,
+        child: ListView(
+          children: [
+            // Stadium Image Card
+            const StadiumCard(),
+        
+            // Match Title Card
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade200,
+                    spreadRadius: 2,
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Match ID: ${widget.matchId}",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    widget.title,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Text(
+                    "Match ID: ${widget.matchId}",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-
-          // Match Info Card
-          MatchInfoCard(
-            leagueName: widget.leagueName,
-            matchDate: widget.matchDate,
-            matchTime: widget.matchTime,
-            stadiumName: widget.stadiumName,
-            description: widget.description,
-          ),
-
-          // Zone Cards
-          ZoneCard(
-            zone: "North Zone A",
-            price: widget.zoneAprice,
-            seatleft : widget.zoneAseate,            
-            onTap: () => _navigateToBooking("A", 1000),
-          ),
-          ZoneCard(
-            zone: "South Zone B",
-            seatleft : widget.zoneBseate,            
-            price: widget.zoneBprice,            
-            onTap: () => _navigateToBooking("B", 800),
-          ),
-          ZoneCard(
-            zone: "West Zone C",
-            seatleft : widget.zoneCseate,            
-            price: widget.zoneCprice,            
-            onTap: () => _navigateToBooking("C", 600),
-          ),
-          ZoneCard(
-            zone: "East Zone D",
-            seatleft : widget.zoneDseate,            
-            price: widget.zoneDprice,            
-            onTap: () => _navigateToBooking("D", 500),
-          ),
-        ],
+        
+            // Match Info Card
+            MatchInfoCard(
+              leagueName: widget.leagueName,
+              matchDate: widget.matchDate,
+              matchTime: widget.matchTime,
+              stadiumName: widget.stadiumName,
+              description: widget.description,
+            ),
+        
+            // Zone Cards
+            ZoneCard(
+              zone: "North Zone A",
+              price: widget.zoneAprice,
+              seatleft: widget.zoneAseate,            
+              onTap: () => _handleZoneSelection("A", widget.zoneAprice),
+            ),
+            ZoneCard(
+              zone: "South Zone B",
+              seatleft: widget.zoneBseate,            
+              price: widget.zoneBprice,            
+              onTap: () => _handleZoneSelection("B", widget.zoneBprice),
+            ),
+            ZoneCard(
+              zone: "West Zone C",
+              seatleft: widget.zoneCseate,            
+              price: widget.zoneCprice,            
+              onTap: () => _handleZoneSelection("C", widget.zoneCprice),
+            ),
+            ZoneCard(
+              zone: "East Zone D",
+              seatleft: widget.zoneDseate,            
+              price: widget.zoneDprice,            
+              onTap: () => _handleZoneSelection("D", widget.zoneDprice),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _handleZoneSelection(String zone, int price) {
+    if (isLoggedIn) {
+      _navigateToBooking(zone, price);
+    } else {
+      _showLoginRequiredDialog();
+    }
   }
 
   void _navigateToBooking(String zone, int price) {
@@ -157,7 +274,6 @@ class _MatchDetailState extends State<MatchDetail> {
     );
   }
 }
-
 
 class StadiumCard extends StatelessWidget {
   const StadiumCard({super.key});
@@ -284,6 +400,8 @@ class MatchInfoCard extends StatelessWidget {
     );
   }
 }
+
+
 
 class ZoneCard extends StatelessWidget {
   final String zone;
