@@ -123,6 +123,13 @@ class AdminHomePage extends StatelessWidget {
                 Navigator.pushNamed(context, '/admin/addnews');
               },
             ),
+            _buildDashboardCard(
+              icon: Icons.stadium_outlined,
+              title: "Stadium",
+              onTap: () {
+                Navigator.pushNamed(context, '/admin/stadium');
+              },
+            ),
           ],
         ),
       ),

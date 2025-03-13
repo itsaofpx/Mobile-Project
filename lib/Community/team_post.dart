@@ -97,7 +97,7 @@ class _PostFeedState extends State<PostFeed> {
                                     userName: post['user_name'] ?? 'Anonymous',
                                     userImage:
                                         post['user_image'] ??
-                                        'https://via.placeholder.com/150',
+                                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LXNJFTmLzCoExghcATlCWG85kI8dsnhJng&s',
                                     content: post['content'],
                                     timestamp: _formatTimestamp(
                                       post['timestamp'],

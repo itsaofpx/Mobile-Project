@@ -24,15 +24,17 @@ class _AdminTeamsPageState extends State<AdminTeamsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Manage Teams"),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            _showAddTeamDialog(context);
-          },
-        ),
-      ],),
+      appBar: AppBar(
+        title: const Text("Manage Teams"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              _showAddTeamDialog(context);
+            },
+          ),
+        ],
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: TeamsApi().getAllTeamsStream(),
         builder: (context, snapshot) {
@@ -54,35 +56,23 @@ class _AdminTeamsPageState extends State<AdminTeamsPage> {
             itemCount: teamCommunityList.length,
             itemBuilder: (context, index) {
               var team = teamCommunityList[index];
-              return Dismissible(
-                key: Key(team['team_id']),
-                background: Container(
-                  color: Colors.blue,
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: const Icon(Icons.edit, color: Colors.white),
-                ),
-                direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  // Navigate to TeamCommunity page with arguments
+              return AdminTeamCard(
+                teamID: team['team_id'],
+                teamName: team['team_name'],
+                teamImage: team['team_image'],
+                onTap: () {
+                  _editTeam(context, team);
+                },
+                onRoute: () {
                   Navigator.pushNamed(
                     context,
-                    '/community/teamcommunity',
+                    '/postFeed',
                     arguments: {
                       'team_id': team['team_id'],
                       'team_name': team['team_name'],
-                      'team_image': team['team_image'],
                     },
                   );
                 },
-                child: AdminTeamCard(
-                  teamID: team['team_id'],
-                  teamName: team['team_name'],
-                  teamImage: team['team_image'],
-                  onTap: () {
-                    _editTeam(context, team);
-                  },
-                ),
               );
             },
           );
@@ -161,13 +151,14 @@ class AdminTeamCard extends StatelessWidget {
   final String teamName;
   final String teamImage;
   final VoidCallback onTap;
-
+  final VoidCallback onRoute;
   const AdminTeamCard({
     super.key,
     required this.teamID,
     required this.teamName,
     required this.teamImage,
     required this.onTap,
+    required this.onRoute,
   });
 
   @override
@@ -224,6 +215,12 @@ class AdminTeamCard extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            IconButton(
+              onPressed: () {
+                onRoute();
+              },
+              icon: const Icon(Icons.comment),
             ),
             const SizedBox(width: 16),
             ElevatedButton(onPressed: onTap, child: const Icon(Icons.edit)),

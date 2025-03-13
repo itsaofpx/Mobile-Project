@@ -2,7 +2,6 @@ name: layout
 description: >-
   Sample app from "Building Layouts", https://docs.flutter.dev/ui/layout.
 version: 1.0.0+1
-
 environment:
   sdk: ">=3.7.0 <4.0.0"
 
@@ -20,10 +19,16 @@ dependencies:
   uuid: ^4.5.1
   firebase_storage: ^12.4.4
   image_picker: ^1.1.2
+  google_maps_flutter: ^2.5.3
+  geocoding: ^2.1.1
+  location: ^5.0.3
+  url_launcher: ^6.3.1
+  map_launcher: ^3.5.0
+  maps_launcher: ^3.0.0+1
 
 dev_dependencies:
   flutter_lints: ^2.0.0
-  
+
   flutter_test:
     sdk: flutter
 

@@ -259,7 +259,7 @@ class TeamCard extends StatelessWidget {
                         teamImage,
                         width: 60,
                         height: 60,
-                        fit: BoxFit.contain,
+                        fit: BoxFit.fitHeight,
                         errorBuilder: (context, error, stackTrace) {
                           return const Icon(Icons.error, size: 60);
                         },

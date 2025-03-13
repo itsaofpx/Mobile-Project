@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:layout/Admin/ManageStadium/manage_stadium.dart';
 import 'package:layout/Admin/ManageTeams/manage_teams.dart';
 import 'package:layout/Admin/ManageUsers/manage_users.dart';
 import 'package:layout/Admin/ManageTicket/ManageTicket.dart';
@@ -13,6 +14,7 @@ import 'package:layout/News/newslist.dart';
 import 'package:layout/News/addNews.dart';
 import 'package:layout/History/history.dart';
 import 'package:layout/account.dart';
+import 'package:layout/stadium/stadium.dart';
 import 'screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // theme: ThemeData(fontFamily: "poppins"),
       home: const MainScreen(),
+      // initialRoute: '/admin',
       initialRoute: '/',
       
       routes: {
@@ -58,7 +61,8 @@ class MyApp extends StatelessWidget {
         '/admin/teams': (context) => const AdminTeamsPage(),
         '/postFeed': (context) => const PostFeed(),
         '/admin/ticket': (context) => const AdminTicketsPage(),
-        
+        '/admin/stadium': (context) => const AdminStadium(),
+        '/stadium' : (context) => const StadiumListScreen(),
       },
     );
   }
