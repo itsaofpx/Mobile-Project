@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:layout/Map/map.dart';
 
-class StadiumListScreen extends StatelessWidget {
+class StadiumListScreen extends StatefulWidget {
   const StadiumListScreen({super.key});
+
+  @override
+  State<StadiumListScreen> createState() => _StadiumListScreenState();
+}
+
+class _StadiumListScreenState extends State<StadiumListScreen> {
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -16,17 +23,40 @@ class StadiumListScreen extends StatelessWidget {
           'Stadium List',
           style: TextStyle(
             fontSize: 24,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
             color: Color(0xFF1A1F36),
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(56.0),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search stadiums...',
+                filled: true,
+                fillColor: Colors.grey[200],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFF5850EC)),
+                contentPadding: const EdgeInsets.symmetric(vertical: 15),
+              ),
+            ),
           ),
         ),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance
-                .collection('stadiums')
-                .orderBy('created_at', descending: true)
-                .snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('stadiums')
+            .orderBy('created_at', descending: true)
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -40,12 +70,20 @@ class StadiumListScreen extends StatelessWidget {
             return const Center(child: Text('No stadiums available'));
           }
 
+          // Filter stadiums based on search query
+          final filteredStadiums = snapshot.data!.docs.where((doc) {
+            final stadium = doc.data() as Map<String, dynamic>;
+            return stadium['stadium_name']
+                    ?.toLowerCase()
+                    .contains(_searchQuery) ??
+                false;
+          }).toList();
+
           return ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: snapshot.data!.docs.length,
+            itemCount: filteredStadiums.length,
             itemBuilder: (context, index) {
-              final stadium =
-                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              final stadium = filteredStadiums[index].data() as Map<String, dynamic>;
 
               return StadiumCard(
                 name: stadium['stadium_name'] ?? '',
@@ -93,12 +131,12 @@ class StadiumCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.1),
             offset: const Offset(0, 4),
-            blurRadius: 12,
+            blurRadius: 15,
           ),
         ],
       ),
@@ -106,13 +144,13 @@ class StadiumCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
+                  top: Radius.circular(20),
                 ),
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
@@ -140,10 +178,9 @@ class StadiumCard extends StatelessWidget {
                     Text(
                       name,
                       style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                         color: Color(0xFF1A1F36),
-                        letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -210,9 +247,8 @@ class StadiumDetailsSheet extends StatelessWidget {
                   stadium['stadium_name'] ?? '',
                   style: const TextStyle(
                     fontSize: 24,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.bold,
                     color: Color(0xFF1A1F36),
-                    letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -241,7 +277,7 @@ class StadiumDetailsSheet extends StatelessWidget {
                   'Description',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.bold,
                     color: Color(0xFF1A1F36),
                   ),
                 ),
@@ -297,7 +333,6 @@ class StadiumDetailsSheet extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                // Replace the existing ElevatedButton onPressed with this:
                 Expanded(
                   flex: 2,
                   child: ElevatedButton(
@@ -305,8 +340,7 @@ class StadiumDetailsSheet extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (context) => StadiumMapScreen(stadium: stadium),
+                          builder: (context) => StadiumMapScreen(stadium: stadium),
                         ),
                       );
                     },
@@ -327,7 +361,7 @@ class StadiumDetailsSheet extends StatelessWidget {
                           'Get Directions',
                           style: TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],

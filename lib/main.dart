@@ -41,7 +41,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // theme: ThemeData(fontFamily: "poppins"),
       home: const MainScreen(),
-      // initialRoute: '/admin',
       initialRoute: '/',
       
       routes: {

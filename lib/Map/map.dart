@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 
 class StadiumMapScreen extends StatefulWidget {
   final Map<String, dynamic> stadium;
@@ -14,99 +13,81 @@ class StadiumMapScreen extends StatefulWidget {
 }
 
 class _StadiumMapScreenState extends State<StadiumMapScreen> {
-  GoogleMapController? _mapController;
-  LocationData? _currentLocation;
-  final Location _location = Location();
-  Set<Marker> _markers = {};
-  LatLng? _stadiumLocation;
+  late final MapController _mapController;
+  late final LatLng _stadiumLocation;
+  LatLng? _currentLocation; // Make this nullable
+  double _currentZoom = 15.0;
+  static const double _minZoom = 3.0;
+  static const double _maxZoom = 18.0;
+  static const double _zoomStep = 1.0;
+
+  String _selectedMapStyle = 'Standard'; // Default map style
+  final List<String> _mapStyles = ['Standard', 'Terrain'];
 
   @override
   void initState() {
     super.initState();
-    _initializeLocation();
-    _getStadiumLocation();
+    _mapController = MapController();
+    _stadiumLocation = LatLng(
+      widget.stadium['stadium_location']?.latitude ?? 0.0,
+      widget.stadium['stadium_location']?.longitude ?? 0.0,
+    );
+    _getCurrentLocation();
   }
 
-  Future<void> _initializeLocation() async {
-    try {
-      final hasPermission = await _requestLocationPermission();
-      if (hasPermission) {
-        final locationData = await _location.getLocation();
-        setState(() {
-          _currentLocation = locationData;
-        });
-        _updateMarkers();
-      }
-    } catch (e) {
-      debugPrint('Error getting location: $e');
-    }
-  }
-
-  Future<bool> _requestLocationPermission() async {
-    bool serviceEnabled = await _location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await _location.requestService();
-      if (!serviceEnabled) return false;
+  Future<void> _getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
     }
 
-    PermissionStatus permissionGranted = await _location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await _location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) return false;
-    }
-
-    return true;
-  }
-
-  Future<void> _getStadiumLocation() async {
-    try {
-      final GeoPoint? location = widget.stadium['location'] as GeoPoint?;
-      if (location != null) {
-        setState(() {
-          _stadiumLocation = LatLng(location.latitude, location.longitude);
-        });
-        _updateMarkers();
-      }
-    } catch (e) {
-      debugPrint('Error getting stadium location: $e');
-    }
-  }
-
-  void _updateMarkers() {
-    final Set<Marker> markers = {};
-
-    if (_currentLocation != null) {
-      markers.add(
-        Marker(
-          markerId: const MarkerId('current_location'),
-          position: LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
-          infoWindow: const InfoWindow(title: 'Your Location'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-        ),
+    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      // LatLng kasetsart = {
+      //   'latitude': 13.8454734,
+      //   'longitude': 100.5724593,
+      // } as LatLng;
+      setState(() {
+        // _currentLocation = LatLng(position.latitude, position.longitude);
+        _currentLocation = const LatLng(13.8454734, 100.5724593);
+        _mapController.move(_currentLocation!, _currentZoom); // Center the map on current location
+      });
+    } else {
+      // Handle permission denied case
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Location permission denied')),
       );
     }
+  }
 
-    if (_stadiumLocation != null) {
-      markers.add(
-        Marker(
-          markerId: const MarkerId('stadium_location'),
-          position: _stadiumLocation!,
-          infoWindow: InfoWindow(title: widget.stadium['stadium_name'] ?? 'Stadium'),
-        ),
-      );
-    }
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
 
+  void _zoomIn() {
+    final newZoom = (_currentZoom + _zoomStep).clamp(_minZoom, _maxZoom);
+    _mapController.move(_mapController.camera.center, newZoom);
     setState(() {
-      _markers = markers;
+      _currentZoom = newZoom;
     });
   }
 
-  void _openGoogleMaps() async {
-    if (_stadiumLocation != null) {
-      final url = 'https://www.google.com/maps/dir/?api=1&destination=${_stadiumLocation!.latitude},${_stadiumLocation!.longitude}';
-      if (await canLaunch(url)) {
-        await launch(url);
-      }
+  void _zoomOut() {
+    final newZoom = (_currentZoom - _zoomStep).clamp(_minZoom, _maxZoom);
+    _mapController.move(_mapController.camera.center, newZoom);
+    setState(() {
+      _currentZoom = newZoom;
+    });
+  }
+
+  String getTileUrl() {
+    switch (_selectedMapStyle) {
+      case 'Terrain':
+        return 'https://tile.opentopomap.org/{z}/{x}/{y}.png'; // Terrain tiles
+      default:
+        return 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'; // Default OpenStreetMap
     }
   }
 
@@ -114,30 +95,232 @@ class _StadiumMapScreenState extends State<StadiumMapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.stadium['stadium_name'] ?? 'Stadium Direction'),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.directions),
-            onPressed: _openGoogleMaps,
+        title: Text(
+          widget.stadium['stadium_name'] ?? 'Stadium Location',
+          style: const TextStyle(
+            color: Color(0xFF1A1F36),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1F36)),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: _stadiumLocation,
+                    initialZoom: _currentZoom,
+                    minZoom: _minZoom,
+                    maxZoom: _maxZoom,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: getTileUrl(),
+                      userAgentPackageName: 'com.example.app',
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: _stadiumLocation,
+                          width: 40,
+                          height: 40,
+                          child: const Icon(
+                            Icons.location_on,
+                            color: Color(0xFF5850EC),
+                            size: 40,
+                          ),
+                        ),
+                        if (_currentLocation != null) // Check if current location is available
+                          Marker(
+                            point: _currentLocation!,
+                            width: 40,
+                            height: 40,
+                            child: const Icon(
+                              Icons.person_pin_circle,
+                              color: Colors.green,
+                              size: 40,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x1A000000),
+                      blurRadius: 8,
+                      offset: Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.stadium['stadium_name'] ?? '',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1A1F36),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: Color(0xFF5850EC),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            widget.stadium['stadium_address'] ?? '',
+                            style: const TextStyle(
+                              color: Color(0xFF4A5568),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _mapController.move(_stadiumLocation, _currentZoom);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF5850EC),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.center_focus_strong, color: Colors.white, size: 20),
+                            SizedBox(width: 8),
+                            Text(
+                              'Center Map',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButton<String>(
+                      value: _selectedMapStyle,
+                      icon: const Icon(Icons.arrow_drop_down),
+                      isExpanded: true,
+                      underline: Container(
+                        height: 2,
+                        color: const Color(0xFF5850EC),
+                      ),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedMapStyle = newValue!;
+                        });
+                      },
+                      items: _mapStyles.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            right: 16,
+            top: 16,
+            child: Column(
+              children: [
+                _ZoomButton(
+                  icon: Icons.add,
+                  onPressed: _currentZoom < _maxZoom ? _zoomIn : null,
+                ),
+                const SizedBox(height: 8),
+                _ZoomButton(
+                  icon: Icons.remove,
+                  onPressed: _currentZoom > _minZoom ? _zoomOut : null,
+                ),
+              ],
+            ),
           ),
         ],
       ),
-      body: _stadiumLocation == null
-          ? const Center(child: CircularProgressIndicator())
-          : GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _stadiumLocation!,
-                zoom: 15,
-              ),
-              markers: _markers,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              onMapCreated: (GoogleMapController controller) {
-                _mapController = controller;
-              },
+    );
+  }
+}
+
+class _ZoomButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback? onPressed;
+
+  const _ZoomButton({
+    required this.icon,
+    this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            width: 40,
+            height: 40,
+            alignment: Alignment.center,
+            child: Icon(
+              icon,
+              color: onPressed != null ? const Color(0xFF1A1F36) : const Color(0xFFBBBBBB),
+              size: 24,
             ),
+          ),
+        ),
+      ),
     );
   }
 }

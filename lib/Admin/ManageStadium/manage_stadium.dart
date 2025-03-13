@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:layout/Admin/ManageStadium/components/stadium.dart';
 
-class AdminStadium extends StatelessWidget {
+class AdminStadium extends StatefulWidget {
   const AdminStadium({super.key});
+
+  @override
+  _AdminStadiumState createState() => _AdminStadiumState();
+}
+
+class _AdminStadiumState extends State<AdminStadium> {
+  final TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -22,48 +31,81 @@ class AdminStadium extends StatelessWidget {
           ),
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance
-                .collection('stadiums')
-                .orderBy('created_at', descending: true)
-                .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                labelText: 'Search by Stadium Name',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.toLowerCase(); // Update search query
+                });
+              },
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance
+                      .collection('stadiums')
+                      .orderBy('created_at', descending: true)
+                      .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No stadiums available'));
-          }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No stadiums available'));
+                }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              final stadium =
-                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
-              final timestamp = stadium['created_at'] as Timestamp;
-              final date = timestamp.toDate();
-              final formattedDate = DateFormat(
-                'MMM d, y • h:mm a',
-              ).format(date);
+                // Filter stadiums based on the search query
+                final filteredStadiums =
+                    snapshot.data!.docs.where((doc) {
+                      final stadium = doc.data() as Map<String, dynamic>;
+                      return stadium['stadium_name'].toLowerCase().contains(
+                        searchQuery,
+                      );
+                    }).toList();
 
-              return StadiumCard(
-                name: stadium['stadium_name'] ?? '',
-                image: stadium['stadium_image'] ?? '',
-                address: stadium['stadium_address'] ?? '',
-                description: stadium['stadium_description'] ?? '',
-                date: formattedDate,
-                onTap: () => _showStadiumDetails(context, stadium),
-              );
-            },
-          );
-        },
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: filteredStadiums.length,
+                  itemBuilder: (context, index) {
+                    final stadium =
+                        filteredStadiums[index].data() as Map<String, dynamic>;
+                    final timestamp = stadium['created_at'] as Timestamp;
+                    final date = timestamp.toDate();
+                    final formattedDate = DateFormat(
+                      'MMM d, y • h:mm a',
+                    ).format(date);
+
+                    return StadiumCard(
+                      name: stadium['stadium_name'] ?? '',
+                      image: stadium['stadium_image'] ?? '',
+                      address: stadium['stadium_address'] ?? '',
+                      description: stadium['stadium_description'] ?? '',
+                      date: formattedDate,
+                      onTap: () => _showStadiumDetails(context, stadium),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -239,9 +281,9 @@ class StadiumDetailsSheet extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                  const Icon(Icons.location_on, color: Colors.red),
-                  const SizedBox(width: 8),
-                  Expanded(
+                    const Icon(Icons.location_on, color: Colors.red),
+                    const SizedBox(width: 8),
+                    Expanded(
                       child: Text(
                         stadium['stadium_address'] ?? '',
                         style: const TextStyle(fontSize: 16),
@@ -256,7 +298,7 @@ class StadiumDetailsSheet extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          updateStadium(context, stadium); // Open update dialog
+                          updateStadium(context, stadium);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -298,570 +340,4 @@ class StadiumDetailsSheet extends StatelessWidget {
       ),
     );
   }
-}
-
-void addStadium(BuildContext context) {
-  final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final addressController = TextEditingController();
-  final locationController = TextEditingController();
-  final descriptionController = TextEditingController();
-  final imageController = TextEditingController();
-  bool isLoading = false;
-
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Add New Stadium',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF091442),
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      // Replace the GestureDetector in addStadium with this TextFormField
-                      TextFormField(
-                        controller: imageController,
-                        decoration: InputDecoration(
-                          labelText: 'Image URL',
-                          hintText: 'Enter image URL',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.image),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter image URL';
-                          }
-                          if (!Uri.parse(value).isAbsolute) {
-                            return 'Please enter a valid URL';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {}); // Trigger rebuild to update preview
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Add image preview
-                      if (imageController.text.isNotEmpty)
-                        Container(
-                          width: double.infinity,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              imageController.text,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Center(
-                                  child: Text('Invalid image URL'),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 16),
-
-                      const SizedBox(height: 24),
-
-                      // Stadium Name
-                      TextFormField(
-                        controller: nameController,
-                        decoration: InputDecoration(
-                          labelText: 'Stadium Name',
-                          hintText: 'Enter stadium name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.stadium),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter stadium name';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Stadium Address
-                      TextFormField(
-                        controller: addressController,
-                        decoration: InputDecoration(
-                          labelText: 'Address',
-                          hintText: 'Enter stadium address',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.location_on),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter stadium address';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Stadium Location
-                      TextFormField(
-                        controller: locationController,
-                        decoration: InputDecoration(
-                          labelText: 'Location',
-                          hintText: 'Enter location details',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.map),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter location';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Stadium Description
-                      TextFormField(
-                        controller: descriptionController,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          labelText: 'Description',
-                          hintText: 'Enter stadium description',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.description),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter description';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Submit Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed:
-                              isLoading
-                                  ? null
-                                  : () async {
-                                    if (formKey.currentState!.validate()) {
-                                      setState(() => isLoading = true);
-                                      try {
-                                        final stadiumId =
-                                            DateTime.now()
-                                                .millisecondsSinceEpoch
-                                                .toString();
-
-                                        final stadiumData = {
-                                          'stadium_id': stadiumId,
-                                          'stadium_name':
-                                              nameController.text.trim(),
-                                          'stadium_address':
-                                              addressController.text.trim(),
-                                          'stadium_location':
-                                              locationController.text.trim(),
-                                          'stadium_description':
-                                              descriptionController.text.trim(),
-                                          'stadium_image':
-                                              imageController.text.trim(),
-                                          'created_at':
-                                              FieldValue.serverTimestamp(),
-                                        };
-
-                                        await FirebaseFirestore.instance
-                                            .collection('stadiums')
-                                            .doc(stadiumId)
-                                            .set(stadiumData);
-
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Stadium added successfully',
-                                            ),
-                                            backgroundColor: Colors.green,
-                                          ),
-                                        );
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Error: ${e.toString()}',
-                                            ),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                      } finally {
-                                        setState(() => isLoading = false);
-                                      }
-                                    }
-                                  },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF091442),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child:
-                              isLoading
-                                  ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                  : const Text(
-                                    'Add Stadium',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-void updateStadium(BuildContext context, Map<String, dynamic> stadium) {
-  final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController(
-    text: stadium['stadium_name'] ?? '',
-  );
-  final addressController = TextEditingController(
-    text: stadium['stadium_address'] ?? '',
-  );
-  final locationController = TextEditingController(
-    text: stadium['stadium_location'] ?? '',
-  );
-  final descriptionController = TextEditingController(
-    text: stadium['stadium_description'] ?? '',
-  );
-  final imageController = TextEditingController(
-    text: stadium['stadium_image'] ?? '',
-  );
-  bool isLoading = false;
-
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Header
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Update Stadium',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF091442),
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Image URL Input
-                      TextFormField(
-                        controller: imageController,
-                        decoration: InputDecoration(
-                          labelText: 'Image URL',
-                          hintText: 'Enter image URL',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.image),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter image URL';
-                          }
-                          if (!Uri.parse(value).isAbsolute) {
-                            return 'Please enter a valid URL';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {});
-                        },
-                      ),
-
-                      if (imageController.text.isNotEmpty)
-                        Container(
-                          width: double.infinity,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              imageController.text,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Center(
-                                  child: Text('Invalid image URL'),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      const SizedBox(height: 16),
-
-                      // Stadium Name
-                      TextFormField(
-                        controller: nameController,
-                        decoration: InputDecoration(
-                          labelText: 'Stadium Name',
-                          hintText: 'Enter stadium name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.stadium),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter stadium name';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Stadium Address
-                      TextFormField(
-                        controller: addressController,
-                        decoration: InputDecoration(
-                          labelText: 'Address',
-                          hintText: 'Enter stadium address',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.location_on),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter stadium address';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      // Stadium Location
-                      TextFormField(
-                        controller: locationController,
-                        decoration: InputDecoration(
-                          labelText: 'Location',
-                          hintText: 'Enter location details',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.map),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter location';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Stadium Description
-                      TextFormField(
-                        controller: descriptionController,
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          labelText: 'Description',
-                          hintText: 'Enter stadium description',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          prefixIcon: const Icon(Icons.description),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter description';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Update Button
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed:
-                              isLoading
-                                  ? null
-                                  : () async {
-                                    if (formKey.currentState!.validate()) {
-                                      setState(() => isLoading = true);
-                                      try {
-                                        final stadiumData = {
-                                          'stadium_name':
-                                              nameController.text.trim(),
-                                          'stadium_address':
-                                              addressController.text.trim(),
-                                          'stadium_location':
-                                              locationController.text.trim(),
-                                          'stadium_description':
-                                              descriptionController.text.trim(),
-                                          'stadium_image':
-                                              imageController.text.trim(),
-                                          'updated_at':
-                                              FieldValue.serverTimestamp(),
-                                        };
-
-                                        await FirebaseFirestore.instance
-                                            .collection('stadiums')
-                                            .doc(stadium['stadium_id'])
-                                            .update(stadiumData);
-
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Stadium updated successfully',
-                                            ),
-                                            backgroundColor: Colors.green,
-                                          ),
-                                        );
-                                      } catch (e) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              'Error: ${e.toString()}',
-                                            ),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                      } finally {
-                                        setState(() => isLoading = false);
-                                      }
-                                    }
-                                  },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF091442),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child:
-                              isLoading
-                                  ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                  : const Text(
-                                    'Update Stadium',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    },
-  );
 }
