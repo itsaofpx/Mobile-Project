@@ -1,50 +1,131 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class NewsListPage extends StatelessWidget {
+class NewsListPage extends StatefulWidget {
   const NewsListPage({super.key});
+
+  @override
+  State<NewsListPage> createState() => _NewsListPageState();
+}
+
+class _NewsListPageState extends State<NewsListPage> {
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final newsCollection = FirebaseFirestore.instance.collection('news');
 
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         title: const Text("News", style: TextStyle(color: Colors.black)),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),        
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: newsCollection.orderBy('news_time', descending: true).snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return const Center(child: Text('Error loading news'));
-          }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No news available'));
-          }
-
-          final newsDocs = snapshot.data!.docs;
-
-          return Container(
-            color: Colors.white,
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: newsDocs.length,
-              itemBuilder: (context, index) {
-                final news = newsDocs[index];
-                return NewsCard(
-                  title: news['news_title'],
-                  content: news['news_content'],
-                  imageUrl: news['news_url'],
-                  publishDate: news['news_time'],
-                );
-              },
+      body: Container(
+        color: Colors.white,
+        child: Column(        
+          children: [
+            // Search Bar
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  suffixIcon: _searchQuery.isNotEmpty 
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            _searchController.clear();
+                            _searchQuery = '';
+                          });
+                        },
+                      )
+                    : null,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+              ),
             ),
-          );
-        },
+            
+            // News List
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: newsCollection.orderBy('news_time', descending: true).snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(child: Text('Error loading news'));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('No news available'));
+                  }
+        
+                  final newsDocs = snapshot.data!.docs;
+                  
+                  // Filter news based on search query
+                  final filteredNews = _searchQuery.isEmpty
+                      ? newsDocs
+                      : newsDocs.where((doc) {
+                          final title = doc['news_title'].toString().toLowerCase();
+                          return title.contains(_searchQuery.toLowerCase());
+                        }).toList();
+                  
+                  if (filteredNews.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.search_off, size: 48, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          Text('ไม่พบข่าวที่ตรงกับ "$_searchQuery"',
+                              style: const TextStyle(color: Colors.grey)),
+                        ],
+                      ),
+                    );
+                  }
+        
+                  return Container(
+                    color: Colors.white,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: filteredNews.length,
+                      itemBuilder: (context, index) {
+                        final news = filteredNews[index];
+                        return NewsCard(
+                          title: news['news_title'],
+                          content: news['news_content'],
+                          imageUrl: news['news_url'],
+                          publishDate: news['news_time'],
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

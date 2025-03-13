@@ -265,61 +265,66 @@ class MyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          width: 350,
-          height: 210, 
-          margin: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(
-              image: AssetImage(item.imagePath),
-              fit: BoxFit.cover, 
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    
-                    Text(
-                      item.name,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            color: Color.fromARGB(255, 59, 59, 59), 
-                            offset: Offset(1.0, 1.0), 
-                            blurRadius: 3.0, 
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Text(
-                      '${item.date} ${item.time}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            color: Color.fromARGB(255, 59, 59, 59), 
-                            offset: Offset(1.0, 1.0), 
-                            blurRadius: 3.0, 
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+        InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, '/newslist');
+          },
+          child: Container(
+            width: 350,
+            height: 210, 
+            margin: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                image: AssetImage(item.imagePath),
+                fit: BoxFit.cover, 
               ),
-            ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Text(
+                        item.name,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              color: Color.fromARGB(255, 59, 59, 59), 
+                              offset: Offset(1.0, 1.0), 
+                              blurRadius: 3.0, 
+                            ),
+                          ],
+                        ),
+                      ),
+          
+                      Text(
+                        '${item.date} ${item.time}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              color: Color.fromARGB(255, 59, 59, 59), 
+                              offset: Offset(1.0, 1.0), 
+                              blurRadius: 3.0, 
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
