@@ -19,27 +19,28 @@ class Item {
 
 List<Item> items = [
   Item(
-    name: 'UCL',
-    date: '2023-06-01',
-    time: '10:00 AM',
+    name: 'NEWS',
+    date: 'UEFA Champion League',
+    time: '',
     price: 10.0,
     imagePath: 'assets/news/6.png',
     idEvent: '1'
   ),
   Item(
-    name: 'UCL',
-    date: '2023-06-02',
-    time: '11:00 AM',
+    name: 'NEWS',
+    date: 'Premier League',
+    time: '',
     price: 20.0,
     imagePath: 'assets/news/5.png',
     idEvent: '2'
   ),
   Item(
-    name: 'UCL',
-    date: '2023-06-03',
-    time: '12:00 PM',
+    name: 'NEWS',
+    date: 'World Cup',
+    time: '',
     price: 30.0,
     imagePath: 'assets/news/4.png', 
     idEvent: '3'
   ),
 ];
+
