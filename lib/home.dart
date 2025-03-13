@@ -216,14 +216,14 @@ class Home extends StatelessWidget {
                           children: [
                             IconButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, '/newslist');
+                                  Navigator.pushNamed(context, '/stadium');
                                 },
                                 icon:const Icon(
-                                  Icons.newspaper,
+                                  Icons.stadium,
                                   size: 30,
                                 )),
                             const Text(
-                              'News',
+                              'Stadium',
                               style: TextStyle(fontSize: 10),
                             ),
                           ],
