@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math'; // สำหรับสร้างเลขสุ่ม
 
 class MatchdayApi {
   final CollectionReference matches = FirebaseFirestore.instance.collection('matchday');
@@ -8,9 +9,16 @@ class MatchdayApi {
     return matches.orderBy('title', descending: false).snapshots();
   }
 
+
+    String generateMatchId() {
+    final random = Random();
+    final number = random.nextInt(10000);
+    final formattedNumber = number.toString().padLeft(4, '0'); 
+    return 'M$formattedNumber';
+  }
+
   // ฟังก์ชันสำหรับเพิ่มข้อมูล Match ใหม่
   Future<void> addMatch({
-    required String matchId,
     required String title,
     required String leagueName,
     required String matchDate,
@@ -28,7 +36,7 @@ class MatchdayApi {
     required int zoneDSeate,
   }) async {
     await matches.add({
-      'matchId': matchId, // ID ของ Match
+      'matchId': generateMatchId(), // ID ของ Match
       'title': title, // ชื่อ Match
       'leagueName': leagueName, // ชื่อลีก
       'matchDate': matchDate, // วันที่ของการแข่งขัน

@@ -6,7 +6,7 @@
 	<dict>
 		<key>FirebaseAuth_Privacy.bundle/Info.plist</key>
 		<data>
-		HSwjvQV5v6+lgyeGF7VQg6i/1K8=
+		ECPY8pGCN8doncbXXwawFqz0dwM=
 		</data>
 		<key>FirebaseAuth_Privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -66,7 +66,7 @@
 		</data>
 		<key>Headers/FirebaseAuth-Swift.h</key>
 		<data>
-		mdCa3wSGX9f/HbdqLNvW/E7Oiz4=
+		9g3y1/WMREscxoUb4Z1s/t3MKO4=
 		</data>
 		<key>Headers/FirebaseAuth-umbrella.h</key>
 		<data>
@@ -78,15 +78,15 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		pd4ZYBOI/PhBm3nlmS3k11tDMsA=
+		yVdsD7rnmTZ4AikS8RZgOOEMJE4=
 		</data>
 		<key>Modules/FirebaseAuth.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		jqQ021HRETmtL5clN7qyyjAt9jA=
+		TX7n1nCv92unnjrhNnNH8281LxU=
 		</data>
 		<key>Modules/FirebaseAuth.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		quXS1SHqqJrPq4FOgLiqnOmF2jE=
+		nlQDgRNZYY2qf8kD4FFP75L8hvQ=
 		</data>
 		<key>Modules/FirebaseAuth.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -94,11 +94,11 @@
 		</data>
 		<key>Modules/FirebaseAuth.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		4DVjzp9FPcf2MCIQ49VTRc14CEE=
+		Iw7RKK7KskbbIJ/SdhfH4T1m/qQ=
 		</data>
 		<key>Modules/FirebaseAuth.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		tYA2XzEQw1K1GSes8m9MPDIg4lI=
+		0HhYHwiO0hZg33nuB+15OMCHKKM=
 		</data>
 		<key>Modules/FirebaseAuth.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -106,11 +106,11 @@
 		</data>
 		<key>Modules/FirebaseAuth.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		lKsRQFh5TiN4R5SYi0tRuMf49fc=
+		efw97U+J5lmlxzt8TkvlLojoagc=
 		</data>
 		<key>Modules/FirebaseAuth.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		lYUb/VgMTXprxNM2VRxO3wwZ5lM=
+		+4DX295Kwc774dHgz4BN2Nb7rDs=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -123,7 +123,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			o55W/Wh4MRioYslGF38BHZ1HUv02EwR7k7yUKG96bLo=
+			UtzefKArBUdWc66BEYkJS5++wQIKwpsqnUdHw5OMFDs=
 			</data>
 		</dict>
 		<key>FirebaseAuth_Privacy.bundle/PrivacyInfo.xcprivacy</key>
@@ -228,7 +228,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			F4XSN2YnVlMVSHyix7v1eQ9jllot2Hv55ixy3PljIMs=
+			+eKxnr5kn+LCd86WrTSTZ9r1wW+vyD+nTwFUXQulHYw=
 			</data>
 		</dict>
 		<key>Headers/FirebaseAuth-umbrella.h</key>
@@ -249,14 +249,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			MXIz9wGVMFTUNhMxg9YjwNImBu7lJE3NvVF7c9ur9ys=
+			fPeHQ/tdDgoI9r4sjJRbdFQHeXvku1KX+wc23IShqfY=
 			</data>
 		</dict>
 		<key>Modules/FirebaseAuth.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			lzjRT/uBc8qPoo/SRNJJr3M6ZXR37HpN81JFY6rvGTU=
+			V7m3GIBmYc1PnQMtUYVAHhdgilY/ZqZQ318Kw0tDTq4=
 			</data>
 		</dict>
 		<key>Modules/FirebaseAuth.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
@@ -270,14 +270,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			B0x9cNzIq2NxZv36NNb3oMUfpj2dxspFxaPNyH14He8=
+			1D5soVFF1FLFot7Cm14Tps+XB2LjCayVKlhtC00odfE=
 			</data>
 		</dict>
 		<key>Modules/FirebaseAuth.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			jNRRYQkrCvfR28oNosmX1igHim2kCZKBBG8ixoiP+2s=
+			NrHB9Z8/JSo2jv5Lda0Q9vxVgHUWLEQVax4JioRrS1U=
 			</data>
 		</dict>
 		<key>Modules/FirebaseAuth.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
@@ -291,14 +291,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			c5pbRfx7TNy/yA1GtLszaMoOW5XnPoVhtkd0/50BG7k=
+			Aam4mYI1x3rgT5u9LPVMz6cDfYZs+c07aa3gqFpuQFk=
 			</data>
 		</dict>
 		<key>Modules/FirebaseAuth.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			S3O90pso/WzrGfl2GBIlAx4qBT7LRosHVJCMbrL1GV4=
+			Fx1vjfrsLk5jMMC2VISkxMQYpTlW0qBVjq4IIbhcai0=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
