@@ -15,7 +15,8 @@ class _AdminTeamsPageState extends State<AdminTeamsPage> {
   Map<String, dynamic> _convertDocToTeam(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>? ?? {};
     return {
-      'team_id': doc.id,
+      'id': doc.id,
+      'team_id': data['team_id'],
       'team_name': data['team_name'] ?? '',
       'team_image': data['team_image'] ?? '',
     };
@@ -70,6 +71,7 @@ class _AdminTeamsPageState extends State<AdminTeamsPage> {
                     arguments: {
                       'team_id': team['team_id'],
                       'team_name': team['team_name'],
+                      'user_role': 'Admin',
                     },
                   );
                 },

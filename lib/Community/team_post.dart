@@ -44,7 +44,10 @@ class _PostFeedState extends State<PostFeed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("${_args?['team_name'] ?? 'Team'} Posts"),backgroundColor: Colors.white,),
+      appBar: AppBar(
+        title: Text("${_args?['team_name'] ?? 'Team'} Posts"),
+        backgroundColor: Colors.white,
+      ),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -94,14 +97,15 @@ class _PostFeedState extends State<PostFeed> {
                                 itemBuilder: (context, index) {
                                   var post = _posts![index].data();
                                   return PostCard(
-                                    userName: post['user_name'] ?? 'Anonymous',
-                                    userImage:
-                                        post['user_image'] ??
-                                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LXNJFTmLzCoExghcATlCWG85kI8dsnhJng&s',
+                                    userName: post['user_name'] ?? 'Admin',
+                                    isAdmin: post['user_role'] == 'Admin',
                                     content: post['content'],
                                     timestamp: _formatTimestamp(
                                       post['timestamp'],
                                     ),
+                                    isCurrentUser:
+                                        post['user_id'] ==
+                                        _args?['user_id'], // Check if the post belongs to the current user
                                   );
                                 },
                               )
@@ -158,6 +162,8 @@ class _PostFeedState extends State<PostFeed> {
               'id': newPostId,
               'team_id': _args?['team_id'],
               'user_name': _args?['user_name'],
+              'user_id': _args?['user_id'],
+              'user_role': _args?['user_role'],
               'user_image': _args?['user_image'],
               'content': _postController.text,
               'timestamp': FieldValue.serverTimestamp(),
@@ -198,22 +204,33 @@ class _PostFeedState extends State<PostFeed> {
 
 class PostCard extends StatelessWidget {
   final String userName;
-  final String userImage;
+  final bool isAdmin;
   final String content;
   final String timestamp;
+  final bool isCurrentUser; // New parameter
 
   const PostCard({
     super.key,
     required this.userName,
-    required this.userImage,
+    required this.isAdmin,
     required this.content,
     required this.timestamp,
+    required this.isCurrentUser, // Include the new parameter in the constructor
   });
 
   @override
   Widget build(BuildContext context) {
+    // Set admin and user images
+    final String userImage =
+        isAdmin
+            ? 'https://static.vecteezy.com/system/resources/thumbnails/019/194/935/small_2x/global-admin-icon-color-outline-vector.jpg'
+            : 'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png';
+
     return Container(
-      color: Colors.white,
+      color:
+          isCurrentUser
+              ? Colors.blue[50]
+              : Colors.white, // Change background color if current user
       child: Card(
         color: Colors.white,
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -230,9 +247,23 @@ class PostCard extends StatelessWidget {
                     radius: 20,
                   ),
                   const SizedBox(width: 10),
-                  Text(
-                    userName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      isAdmin
+                          ? const Text(
+                            'Admin',
+                            style: TextStyle(fontSize: 12, color: Colors.green),
+                          )
+                          : const Text(
+                            'User',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                    ],
                   ),
                 ],
               ),
