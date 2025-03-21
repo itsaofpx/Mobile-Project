@@ -25,7 +25,8 @@ dependencies:
   map_launcher: ^3.5.0
   flutter_map: 8.1.1
   latlong2: ^0.9.0
-  geolocator: ^13.0.2
+  geolocator: ^10.1.0
+  permission_handler: ^11.0.1
 
 dev_dependencies:
   flutter_lints: ^2.0.0

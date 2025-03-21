@@ -133,7 +133,7 @@ class _SignUpState extends State<SignUp> {
       User? user = await _userApi.signUp(email, password, username, "user");
       if (user != null) {
         _showSuccessSnackBar(context, "Account created successfully!");
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/login');
       }
     } catch (e) {
       _showAlert(context, "Sign Up Failed", e.toString());
