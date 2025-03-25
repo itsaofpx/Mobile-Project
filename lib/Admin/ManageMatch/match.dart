@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:layout/api/matchday.dart'; // นำเข้า MatchdayApi
-import 'package:intl/intl.dart'; // เพิ่ม package สำหรับจัดการวันที่
+import 'package:layout/api/matchday.dart';
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddMatchScreen extends StatefulWidget {
   const AddMatchScreen({Key? key}) : super(key: key);
@@ -10,11 +11,11 @@ class AddMatchScreen extends StatefulWidget {
 }
 
 class _AddMatchScreenState extends State<AddMatchScreen> {
-  final MatchdayApi api = MatchdayApi(); // สร้าง Instance ของ MatchdayApi
+  final MatchdayApi api = MatchdayApi();
   final _formKey = GlobalKey<FormState>();
 
   // สีหลักของแอป
-  final Color primaryColor = const Color(0xFF0A2463); // น้ำเงินเข้ม
+  final Color primaryColor = const Color(0xFF0A2463);
   final Color backgroundColor = Colors.white;
   final Color textColor = const Color(0xFF0A2463);
 
@@ -42,7 +43,7 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
   String? selectedLeague;
   String? selectedStadium;
   List<String> leagues = ['Thai League', 'Premier League', 'La Liga', 'Serie A', 'Bundesliga'];
-  List<String> stadiums = ['Rajamangala Stadium', 'SCG Stadium', 'Leo Stadium', 'Chang Arena', 'Thammasat Stadium'];
+  List<String> stadiums = []; // เปลี่ยนเป็นรายการว่าง เพราะจะดึงข้อมูลจาก Firestore
 
   // ราคาที่สามารถเลือกได้
   List<double> availablePrices = [
@@ -55,6 +56,42 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
     50, 100, 150, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000,
     1200, 1500, 2000, 2500, 3000, 4000, 5000
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // เรียกฟังก์ชันเพื่อดึงข้อมูลสนามเมื่อหน้าจอถูกสร้าง
+    _fetchStadiums();
+  }
+
+  // ฟังก์ชันสำหรับดึงข้อมูลสนามจาก Firestore
+  Future<void> _fetchStadiums() async {
+    try {
+      // ดึงข้อมูลสนามจาก Firestore
+      final snapshot = await FirebaseFirestore.instance
+          .collection('stadiums')
+          .get();
+      
+      // แปลงข้อมูลที่ได้เป็นรายการชื่อสนาม
+      final List<String> fetchedStadiums = snapshot.docs
+          .map((doc) => doc['stadium_name'] as String)
+          .toList();
+      
+      // อัปเดตรายการสนามใน state
+      setState(() {
+        stadiums = fetchedStadiums;
+      });
+    } catch (e) {
+      print('Error fetching stadiums: $e');
+      // แสดง SnackBar เมื่อเกิดข้อผิดพลาด
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('ไม่สามารถดึงข้อมูลสนามได้: $e'),
+          backgroundColor: Colors.red[700],
+        ),
+      );
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -183,6 +220,55 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
       dropdownColor: Colors.white,
       style: TextStyle(color: textColor),
       isExpanded: true, // ป้องกัน overflow
+    );
+  }
+
+  // สร้าง Widget สำหรับ Dropdown ที่ดึงข้อมูลจาก Firestore
+  Widget _buildStadiumDropdown() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('stadiums')
+          .orderBy('created_at', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('เกิดข้อผิดพลาด: ${snapshot.error}');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return DropdownButtonFormField<String>(
+            decoration: _buildInputDecoration('กำลังโหลดข้อมูลสนาม...'),
+            items: [],
+            onChanged: null,
+          );
+        }
+
+        // สร้างรายการสนามจากข้อมูลที่ได้จาก Firestore
+        final List<String> stadiumList = snapshot.data!.docs
+            .map((doc) => doc['stadium_name'] as String)
+            .toList();
+
+        return DropdownButtonFormField<String>(
+          decoration: _buildInputDecoration('สนาม'),
+          value: selectedStadium,
+          items: stadiumList.map((String stadium) {
+            return DropdownMenuItem<String>(
+              value: stadium,
+              child: Text(stadium),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              selectedStadium = newValue;
+              stadiumNameController.text = newValue ?? '';
+            });
+          },
+          icon: Icon(Icons.arrow_drop_down, color: primaryColor),
+          dropdownColor: Colors.white,
+          style: TextStyle(color: textColor),
+          isExpanded: true,
+        );
+      },
     );
   }
 
@@ -318,38 +404,11 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
                 children: [
                   _buildSectionHeader('ข้อมูลการแข่งขัน'),
                   
-                  // Row 1: Match ID and Title
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      if (constraints.maxWidth > 600) {
-                        // หน้าจอกว้าง - แสดง 2 คอลัมน์
-                        return Row(
-                          children: [
-                           
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _buildTextField(
-                                titleController, 
-                                'ชื่อการแข่งขัน',
-                                validator: (value) => value!.isEmpty ? 'กรุณาใส่ชื่อการแข่งขัน' : null,
-                              ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        // หน้าจอแคบ - แสดง 1 คอลัมน์
-                        return Column(
-                          children: [  
-                            const SizedBox(height: 12),
-                            _buildTextField(
-                              titleController, 
-                              'ชื่อการแข่งขัน',
-                              validator: (value) => value!.isEmpty ? 'กรุณาใส่ชื่อการแข่งขัน' : null,
-                            ),
-                          ],
-                        );
-                      }
-                    },
+                  // Row 1: Title
+                  _buildTextField(
+                    titleController, 
+                    'ชื่อการแข่งขัน',
+                    validator: (value) => value!.isEmpty ? 'กรุณาใส่ชื่อการแข่งขัน' : null,
                   ),
                   const SizedBox(height: 12),
                   
@@ -375,17 +434,8 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
                             ),
                             const SizedBox(width: 12),
                             Expanded(
-                              child: _buildDropdown(
-                                'สนาม', 
-                                stadiums, 
-                                selectedStadium, 
-                                (String? newValue) {
-                                  setState(() {
-                                    selectedStadium = newValue;
-                                    stadiumNameController.text = newValue ?? '';
-                                  });
-                                }
-                              ),
+                              // เปลี่ยนจาก _buildDropdown เป็น _buildStadiumDropdown
+                              child: _buildStadiumDropdown(),
                             ),
                           ],
                         );
@@ -405,17 +455,8 @@ class _AddMatchScreenState extends State<AddMatchScreen> {
                               }
                             ),
                             const SizedBox(height: 12),
-                            _buildDropdown(
-                              'สนาม', 
-                              stadiums, 
-                              selectedStadium, 
-                              (String? newValue) {
-                                setState(() {
-                                  selectedStadium = newValue;
-                                  stadiumNameController.text = newValue ?? '';
-                                });
-                              }
-                            ),
+                            // เปลี่ยนจาก _buildDropdown เป็น _buildStadiumDropdown
+                            _buildStadiumDropdown(),
                           ],
                         );
                       }
