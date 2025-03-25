@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
         '/account': (context) => const Account(),
         '/matchlist': (context) => MatchListScreen(),
         '/community' : (context) => const Team(),
-        // '/community/teamcommunity': (context) => const TeamCommunity(),
         '/newslist': (context) => const NewsListPage(),
         '/admin': (context) => const AdminHomePage(),
         '/admin/users': (context) => const AdminUsersPage(),

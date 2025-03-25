@@ -24,99 +24,117 @@ class _MatchListScreenState extends State<MatchListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Match Schedule'),
-        backgroundColor: Colors.white,
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            // Search Box
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search matches...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                ),
-                onChanged: searchMatches,
-              ),
+      body: NestedScrollView(
+        // ส่วนหัวที่จะเลื่อนขึ้นไปเมื่อเลื่อนลง
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              title: const Text('Match Schedule'),
+              backgroundColor: Colors.white,
+              pinned: true, // ทำให้ AppBar ติดอยู่ด้านบนเสมอ
+              forceElevated: innerBoxIsScrolled,
             ),
-
-            // Filter Row - เหลือเฉพาะ League filter
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: _buildFilterDropdown(                                
-                label: 'League',
-                value: filterLeague,
-                items: ['All', 'Thai League', 'FA Cup', 'Premier League', 'UEFA Champions league'],
-                onChanged: (value) {
-                  setState(() {
-                    filterLeague = value!;
-                  });
-                },
-              ),
-            ),
-
-            // Match Stats
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('matchday').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const SizedBox.shrink();
-                }
-
-                final totalMatches = snapshot.data!.docs.length;
-                
-                return Padding(
+          ];
+        },
+        // เนื้อหาหลักที่สามารถเลื่อนได้
+        body: Container(
+          color: Colors.white,
+          child: CustomScrollView(
+            slivers: [
+              // Search Box
+              SliverToBoxAdapter(
+                child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0E1E5B).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFF0E1E5B).withOpacity(0.3)),
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search matches...',
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.sports_soccer, color: Color(0xFF0E1E5B)),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Total Matches: $totalMatches',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0E1E5B),
-                          ),
-                        ),
-                      ],
-                    ),
+                    onChanged: searchMatches,
                   ),
-                );
-              },
-            ),
+                ),
+              ),
 
-            // แสดงข้อมูลจาก Firestore
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
+              // Filter Row - เหลือเฉพาะ League filter
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: _buildFilterDropdown(
+                    label: 'League',
+                    value: filterLeague,
+                    items: ['All', 'Thai League', 'FA Cup', 'Premier League', 'UEFA Champions league'],
+                    onChanged: (value) {
+                      setState(() {
+                        filterLeague = value!;
+                      });
+                    },
+                  ),
+                ),
+              ),
+
+              // Match Stats
+              SliverToBoxAdapter(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance.collection('matchday').snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const SizedBox.shrink();
+                    }
+
+                    final totalMatches = snapshot.data!.docs.length;
+                    
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0E1E5B).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF0E1E5B).withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.sports_soccer, color: Color(0xFF0E1E5B)),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Total Matches: $totalMatches',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF0E1E5B),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // แสดงข้อมูลจาก Firestore
+              StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('matchday')
                     .orderBy('title', descending: false)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    );
                   }
 
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text('No matches found.'));
+                    return const SliverFillRemaining(
+                      child: Center(child: Text('No matches found.')),
+                    );
                   }
 
                   // กรองข้อมูลตามข้อความค้นหาและตัวกรอง
@@ -141,208 +159,212 @@ class _MatchListScreenState extends State<MatchListScreen> {
                   }).toList();
 
                   if (filteredMatches.isEmpty) {
-                    return const Center(child: Text('No matches found with current filters.'));
+                    return const SliverFillRemaining(
+                      child: Center(child: Text('No matches found with current filters.')),
+                    );
                   }
 
-                  return ListView.builder(
-                    itemCount: filteredMatches.length,
-                    itemBuilder: (context, index) {
-                      final match = filteredMatches[index];
-                      final data = match.data() as Map<String, dynamic>;
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final match = filteredMatches[index];
+                        final data = match.data() as Map<String, dynamic>;
 
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
                           ),
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MatchDetail(
-                                    matchId: data['matchId'] ?? '',
-                                    title: data['title'] ?? '',
-                                    leagueName: data['leagueName'] ?? '',
-                                    matchDate: data['matchDate'] ?? '',
-                                    matchTime: data['matchTime'] ?? '',
-                                    stadiumName: data['stadiumName'] ?? '',
-                                    description: data['description'] ?? '',
-                                    zoneAprice: data['zoneA_price'] != null
-                                        ? int.tryParse(data['zoneA_price'].toString(),) ?? 0
-                                        : 0,
-                                    zoneBprice: data['zoneB_price'] != null
-                                        ? int.tryParse(data['zoneB_price'].toString(),) ?? 0
-                                        : 0,
-                                    zoneCprice: data['zoneC_price'] != null
-                                        ? int.tryParse(data['zoneC_price'].toString(),) ?? 0
-                                        : 0,
-                                    zoneDprice: data['zoneD_price'] != null
-                                        ? int.tryParse(data['zoneD_price'].toString(),) ?? 0
-                                        : 0,
-                                    zoneAseate: data['zoneA_seate'] != null
-                                        ? int.tryParse(data['zoneA_seate'].toString(),) ?? 0
-                                        : 0,
-                                    zoneBseate: data['zoneB_seate'] != null
-                                        ? int.tryParse(data['zoneB_seate'].toString(),) ?? 0
-                                        : 0,
-                                    zoneCseate: data['zoneC_seate'] != null
-                                        ? int.tryParse(data['zoneC_seate'].toString(),) ?? 0
-                                        : 0,
-                                    zoneDseate: data['zoneD_seate'] != null
-                                        ? int.tryParse(data['zoneD_seate'].toString(),) ?? 0
-                                        : 0,
+                          child: Card(
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MatchDetail(
+                                      matchId: data['matchId'] ?? '',
+                                      title: data['title'] ?? '',
+                                      leagueName: data['leagueName'] ?? '',
+                                      matchDate: data['matchDate'] ?? '',
+                                      matchTime: data['matchTime'] ?? '',
+                                      stadiumName: data['stadiumName'] ?? '',
+                                      description: data['description'] ?? '',
+                                      zoneAprice: data['zoneA_price'] != null
+                                          ? int.tryParse(data['zoneA_price'].toString(),) ?? 0
+                                          : 0,
+                                      zoneBprice: data['zoneB_price'] != null
+                                          ? int.tryParse(data['zoneB_price'].toString(),) ?? 0
+                                          : 0,
+                                      zoneCprice: data['zoneC_price'] != null
+                                          ? int.tryParse(data['zoneC_price'].toString(),) ?? 0
+                                          : 0,
+                                      zoneDprice: data['zoneD_price'] != null
+                                          ? int.tryParse(data['zoneD_price'].toString(),) ?? 0
+                                          : 0,
+                                      zoneAseate: data['zoneA_seate'] != null
+                                          ? int.tryParse(data['zoneA_seate'].toString(),) ?? 0
+                                          : 0,
+                                      zoneBseate: data['zoneB_seate'] != null
+                                          ? int.tryParse(data['zoneB_seate'].toString(),) ?? 0
+                                          : 0,
+                                      zoneCseate: data['zoneC_seate'] != null
+                                          ? int.tryParse(data['zoneC_seate'].toString(),) ?? 0
+                                          : 0,
+                                      zoneDseate: data['zoneD_seate'] != null
+                                          ? int.tryParse(data['zoneD_seate'].toString(),) ?? 0
+                                          : 0,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(12),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(12),
+                                      topRight: Radius.circular(12),
+                                    ),
+                                    child: Image.network(
+                                      data['linkpic'] ?? '',
+                                      height: 200,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Container(
+                                          height: 200,
+                                          color: Colors.grey[300],
+                                          child: const Center(
+                                            child: Icon(Icons.error_outline),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
-                                  child: Image.network(
-                                    data['linkpic'] ?? '',
-                                    height: 200,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        height: 200,
-                                        color: Colors.grey[300],
-                                        child: const Center(
-                                          child: Icon(Icons.error_outline),
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Color(0xFF0E1E5B),
+                                          Color(0xFF091442),
+                                        ],
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          data['leagueName'] ?? '',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Color.fromARGB(255, 255, 255, 255),
+                                          ),
                                         ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Color(0xFF0E1E5B),
-                                        Color(0xFF091442),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(255, 27, 41, 97),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            'Match ID: ${data['matchId'] ?? ''}',
+                                            style: const TextStyle(
+                                              color: Color.fromARGB(255, 255, 255, 255),
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        data['leagueName'] ?? '',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color.fromARGB(255, 255, 255, 255),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(255, 27, 41, 97),
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child: Text(
-                                          'Match ID: ${data['matchId'] ?? ''}',
+                                  Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          data['title'] ?? '',
                                           style: const TextStyle(
-                                            color: Color.fromARGB(255, 255, 255, 255),
-                                            fontSize: 12,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        data['title'] ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.calendar_today,
+                                              size: 16,
+                                              color: Colors.grey,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              data['matchDate'] ?? '',
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.calendar_today,
-                                            size: 16,
-                                            color: Colors.grey,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            data['matchDate'] ?? '',
-                                            style: const TextStyle(
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.access_time,
+                                              size: 16,
                                               color: Colors.grey,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.access_time,
-                                            size: 16,
-                                            color: Colors.grey,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            data['matchTime'] ?? '',
-                                            style: const TextStyle(
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              data['matchTime'] ?? '',
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.stadium,
+                                              size: 16,
                                               color: Colors.grey,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.stadium,
-                                            size: 16,
-                                            color: Colors.grey,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            data['stadiumName'] ?? '',
-                                            style: const TextStyle(
-                                              color: Colors.grey,
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              data['stadiumName'] ?? '',
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                      childCount: filteredMatches.length,
+                    ),
                   );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

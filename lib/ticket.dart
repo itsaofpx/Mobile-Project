@@ -384,7 +384,7 @@ class _TicketState extends State<Ticket> {
                                       backgroundColor: Colors.red[400],
                                       foregroundColor: Colors.white,
                                     ),
-                                    child: const Text('ล้างตัวกรอง'),
+                                    child: const Text('Clear Filter'),
                                   ),
                                 ),
                             ],
@@ -623,8 +623,8 @@ class _TicketState extends State<Ticket> {
                         const SizedBox(height: 16),
                         Text(
                           filterBy != 'all' || searchQuery.isNotEmpty
-                              ? "ไม่พบตั๋วที่ตรงกับเงื่อนไขการกรอง"
-                              : "ไม่มีตั๋วที่กำลังจะมาถึง",
+                              ? "No matching tickets found"
+                              : "No tickets found",
                           style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
@@ -633,8 +633,8 @@ class _TicketState extends State<Ticket> {
                         const SizedBox(height: 16),
                         if (filterBy != 'all' || searchQuery.isNotEmpty)
                           ElevatedButton.icon(
-                            icon: const Icon(Icons.refresh),
-                            label: const Text("ล้างตัวกรอง"),
+                            icon: const Icon(Icons.refresh,color: Colors.white,),
+                            label: const Text("Clear Filters"),
                             onPressed: _clearFilters,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red[400],

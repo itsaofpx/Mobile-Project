@@ -16,7 +16,7 @@ class _PlayeroftheWeekState extends State<PlayeroftheWeek> {
       "age": 26,
       "goals": 28,
       "image":
-          "https://i2-prod.birminghammail.co.uk/incoming/article31179531.ece/ALTERNATES/s615/0_Casa-Pia-AC-v-Sporting-Clube-de-Portugal-Liga-Portugal-Betclic.jpg",
+          "https://cdn.futwiz.com/assets/img/fc24/faces/67350515.png",
     },
     {
       "name": "Mohamed Salah",
@@ -24,7 +24,23 @@ class _PlayeroftheWeekState extends State<PlayeroftheWeek> {
       "age": 32,
       "goals": 27,
       "image":
-          "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcSdyJquwrl1qFmmWqprQbd4onAhWPwvy86tLH8i9VyAuzMoOP-Jlu4ME-snNjZ9SeeaN97nQyHdCgafqTI&usqp=CAU",
+          "https://cdn.futwiz.com/assets/img/fc24/faces/50540979.png",
+    },
+       {
+      "name": "Kylian Mbappé",
+      "team": "Real Madrid",
+      "age": 26,
+      "goals": 20,
+      "image":
+          "https://cdn.futwiz.com/assets/img/fc25/faces/117672259.png",
+    },
+       {
+      "name": "Jude Bellingham",
+      "team": "Real Madrid",
+      "age": 20,
+      "goals": 14,
+      "image":
+          "https://cdn.futwiz.com/assets/img/fc24/faces/84138451.png",
     },
     {
       "name": "Harry Kane",
@@ -32,7 +48,15 @@ class _PlayeroftheWeekState extends State<PlayeroftheWeek> {
       "age": 31,
       "goals": 21,
       "image":
-          "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQ8dXvb3Sc6S6yS4vWD64bss6MWF8CMz6t0kw78bt3uuE1JoDYeaJEN8q_OCoxJhcXZsfVmB9E_hKbr8N4",
+          "https://cdn.futwiz.com/assets/img/fc25/faces/84088206.png",
+    },
+      {
+      "name": "Erling Haaland",
+      "team": "Manchester City",
+      "age": 24,
+      "goals": 21,
+      "image":
+          "https://cdn.futwiz.com/assets/img/fc24/faces/67347949.png",
     },
     {
       "name": "Ousmane Dembélé",
@@ -40,24 +64,9 @@ class _PlayeroftheWeekState extends State<PlayeroftheWeek> {
       "age": 27,
       "goals": 21,
       "image":
-          "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcQioOUaiVBgIcG_-Fphnmsha5i4kzO-wzlGN3t7rQ_OjkgRZsIyPidd6KJNtRENZ_vCCdvnCp41G6NkaFc",
+          "https://cdn.futwiz.com/assets/img/fc25/faces/84117523.png",
     },
-    {
-      "name": "Erling Haaland",
-      "team": "Manchester City",
-      "age": 24,
-      "goals": 21,
-      "image":
-          "https://images.ps-aws.com/c?url=https%3A%2F%2Fimages.teamtalk.com%2Fcontent%2Fuploads%2F2022%2F10%2F06064410%2FErling-Haaland-Man-City1.jpg",
-    },
-    {
-      "name": "Kylian Mbappé",
-      "team": "Real Madrid",
-      "age": 26,
-      "goals": 20,
-      "image":
-          "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcRHLPngnTTyiYVZYY2yXvGhxvmnSJs4ILe8lYVVDU46pVV4qQudC5D9MtqnlFUSWwiBIbetKGVemNLZUqY",
-    },
+  
   ];
 
   final PageController _pageController = PageController();
@@ -78,7 +87,7 @@ class _PlayeroftheWeekState extends State<PlayeroftheWeek> {
   }
 
   void _startAutoScroll() {
-    _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
       if (_currentPage < players.length - 1) {
         _currentPage++;
       } else {
@@ -153,7 +162,8 @@ class _PlayeroftheWeekState extends State<PlayeroftheWeek> {
                         child: ClipRRect(
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(16),
-                            bottomLeft: Radius.circular(16),
+                            bottomLeft: Radius.circular(16)
+                            
                           ),
                           child: Image.network(
                             player["image"],
@@ -190,7 +200,7 @@ class _PlayeroftheWeekState extends State<PlayeroftheWeek> {
                       // Player details - more compact
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(10), // Reduced padding
+                          padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -306,10 +316,10 @@ class _PlayeroftheWeekState extends State<PlayeroftheWeek> {
           ),
           // Footer with reduced padding
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 8, 0, 0),
-            child: Text(
+            padding: const EdgeInsets.fromLTRB(20, 15, 0, 0),
+            child: const Text(
               '© 2025 Aofuro inc. All rights reserved.',
-              style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 12, color: Color.fromARGB(255, 74, 74, 74)),
             ),
           ),
         ],
