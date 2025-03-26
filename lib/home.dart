@@ -33,14 +33,13 @@ class Home extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    // Luxury pattern overlay
                     Opacity(
-                      opacity: 0.05,
+                      opacity: 0.15,
                       child: Container(
                         decoration: const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
-                              'assets/images/luxury_pattern.png',
+                              'assets/images/luxury_pattern.jpg',
                             ),
                             repeat: ImageRepeat.repeat,
                           ),
@@ -53,7 +52,7 @@ class Home extends StatelessWidget {
                       left: 20,
                       child: Container(
                         height: 3,
-                        width: 40,
+                        width: MediaQuery.of(context).size.width * 0.4,
                         decoration: const BoxDecoration(
                           color: Color(0xFFFFD700),
                         ),
@@ -69,9 +68,9 @@ class Home extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  padding: const EdgeInsets.symmetric(vertical: 25,horizontal: 25),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
                         children: [
@@ -82,7 +81,7 @@ class Home extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '${DateFormat("MMMM d, yyyy").format(DateTime.now())}',
+                            DateFormat("MMMM d, yyyy").format(DateTime.now()),
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w300,
@@ -91,19 +90,6 @@ class Home extends StatelessWidget {
                             ),
                           ),
                         ],
-                      ),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.notifications_none_rounded,
-                          color: Colors.white,
-                          size: 22,
-                        ),
                       ),
                     ],
                   ),
@@ -144,7 +130,7 @@ class Home extends StatelessWidget {
                     fontSize: 28,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
-                    color: Color(0xFFFFD700), // Gold color
+                    color: Color(0xFFFFD700), 
                     shadows: [
                       Shadow(
                         color: Color.fromARGB(100, 0, 0, 0),
