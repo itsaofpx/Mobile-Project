@@ -74,7 +74,11 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
+<<<<<<< Updated upstream
 		+8GUTjT65EWKWGCvzzqxpU7xZPE=
+=======
+		Fn6CJcrmOY7R/UCpVvDdwVm3fwA=
+>>>>>>> Stashed changes
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>

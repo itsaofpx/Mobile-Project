@@ -56,7 +56,7 @@ class _AdminStadiumState extends State<AdminStadium> {
               stream:
                   FirebaseFirestore.instance
                       .collection('stadiums')
-                      .orderBy('created_at', descending: true)
+                      .orderBy('stadium_name')
                       .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {

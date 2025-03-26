@@ -142,11 +142,19 @@
 		</data>
 		<key>Modules/FirebaseFirestore.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
+<<<<<<< Updated upstream
 		Y5/eK7ns106ibRMWbjdMN6BoTz4=
 		</data>
 		<key>Modules/FirebaseFirestore.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
 		0aQRJASVkEnoG+hDgF66t7CdAtg=
+=======
+		xV1J1vdzZA3d7NCFFR6EM8vGmzU=
+		</data>
+		<key>Modules/FirebaseFirestore.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
+		<data>
+		QNVRgX5cw172dJB1dRYcCODDNBs=
+>>>>>>> Stashed changes
 		</data>
 		<key>Modules/FirebaseFirestore.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -414,14 +422,22 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			P420TkXEY+AHYjniCNz5mRixY7ZDWFbfxSmXUzl1Ngs=
+=======
+			bZOT5QWUgLaPFXzNaJEbqx05xo1QGWOR0Q77apC0m4A=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Modules/FirebaseFirestore.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			Vdq/dzrhfRfWs9EAfAfnUoYPM/zF1Z3wV0tzIK/V8Lk=
+=======
+			ejXDdUXuyIs5xGfh/XKf7QFyZWUZmKGYg6X/qP8y81E=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Modules/FirebaseFirestore.swiftmodule/arm64-apple-ios-simulator.abi.json</key>

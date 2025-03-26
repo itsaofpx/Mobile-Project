@@ -17,70 +17,105 @@ class Home extends StatelessWidget {
           Stack(
             clipBehavior: Clip.none,
             children: [
+              // Luxury background with pattern
               Container(
                 width: MediaQuery.of(context).size.width,
                 height: 500,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color.fromARGB(255, 5, 14, 50),
-                      Color.fromARGB(255, 22, 63, 94),
+                      Color(0xFF0A1128), // Deep navy blue
+                      Color(0xFF1E3A8A), // Royal blue
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                 ),
-              ),
-
-                Positioned(
-                top: 70, // ระยะห่างจากด้านบน
-                right: 30, // ระยะห่างจากด้านขวา
-                child: Container(
-                  width: 40, // ขนาดของวงกลม
-                  height: 40, // ขนาดของวงกลม
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle, // ทำให้ container เป็นวงกลม
-                    image: DecorationImage(
-                      image: AssetImage(
-                          'assets/images/profile.png'), // เปลี่ยนเป็น path รูปที่คุณต้องการ
-                      fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่วงกลม
-                    ),
-                  ),
-                ),
-              ),
-              
-
-              Positioned(
-                top: 70,
-                left: 30,
-                child: Container(
-                  alignment: Alignment.centerLeft,
-                  width: 450,
-                  height: 50,
-
-                  child: Text(
-                    'Today is ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          color: Color.fromARGB(255, 118, 118, 118),
-                          offset: Offset(1.0, 1.0),
-                          blurRadius: 1.0,
+                child: Stack(
+                  children: [
+                    // Luxury pattern overlay
+                    Opacity(
+                      opacity: 0.05,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              'assets/images/luxury_pattern.png',
+                            ),
+                            repeat: ImageRepeat.repeat,
+                          ),
                         ),
-                      ],
+                      ),
                     ),
+                    // Gold accent line
+                    Positioned(
+                      top: 120,
+                      left: 20,
+                      child: Container(
+                        height: 3,
+                        width: 40,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFFD700),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // App bar with date
+              Positioned(
+                top: 60,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${DateFormat("MMMM d, yyyy").format(DateTime.now())}',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: 1.2,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.notifications_none_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
 
+              // Curved white overlay
               Positioned(
                 top: 450,
                 left: 0,
+                right: 0,
                 child: Container(
-                  width: 450,
                   height: 100,
                   decoration: const BoxDecoration(
                     color: Colors.white,
@@ -88,22 +123,31 @@ class Home extends StatelessWidget {
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color.fromARGB(10, 0, 0, 0),
+                        blurRadius: 10,
+                        offset: Offset(0, -5),
+                      ),
+                    ],
                   ),
                 ),
               ),
 
+              // Main heading
               const Positioned(
                 top: 160,
-                left: 20,
+                left: 25,
                 child: Text(
-                  'Hi, Goodmorning!',
+                  'PREMIUM EXPERIENCE',
                   style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.5,
+                    color: Color(0xFFFFD700), // Gold color
                     shadows: [
                       Shadow(
-                        color: Color.fromARGB(255, 118, 118, 118),
+                        color: Color.fromARGB(100, 0, 0, 0),
                         offset: Offset(1.0, 1.0),
                         blurRadius: 3.0,
                       ),
@@ -112,38 +156,22 @@ class Home extends StatelessWidget {
                 ),
               ),
 
+              // Subheading
               const Positioned(
-                top: 210,
-                left: 20,
+                top: 200,
+                left: 25,
                 child: Text(
-                  'Welcome to GoalTix!',
+                  'Elevate Your Match Day Experience',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 0.8,
                     color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        color: Color.fromARGB(255, 118, 118, 118),
-                        offset: Offset(1.0, 1.0),
-                        blurRadius: 3.0,
-                      ),
-                    ],
                   ),
                 ),
               ),
 
-              // const Positioned(
-              //   top: 240,
-              //   left: 37,
-              //   child: Text(
-              //     '1st Ticket App in the World',
-              //     style: TextStyle(
-              //       fontSize: 12,
-              //       fontStyle: FontStyle.italic,
-              //       color: Color.fromARGB(255, 255, 255, 255),
-
-              //     ),
-              //   ),
-              // ),
+              // Horizontal card list
               Positioned(
                 top: 300,
                 left: 0,

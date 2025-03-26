@@ -55,7 +55,7 @@ class _StadiumListScreenState extends State<StadiumListScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('stadiums')
-            .orderBy('created_at', descending: true)
+            .orderBy('stadium_name', descending: false)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {

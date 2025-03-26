@@ -46,7 +46,11 @@
 		</data>
 		<key>Frameworks/App.framework/App</key>
 		<data>
+<<<<<<< Updated upstream
 		Aeuk2xlwjgzuQk1Q5F8tmKP8vPk=
+=======
+		yDZfvROJ4O3S8WRQyTbt7jq8T3U=
+>>>>>>> Stashed changes
 		</data>
 		<key>Frameworks/App.framework/Info.plist</key>
 		<data>
@@ -54,7 +58,11 @@
 		</data>
 		<key>Frameworks/App.framework/_CodeSignature/CodeResources</key>
 		<data>
+<<<<<<< Updated upstream
 		4WNGxP/z5NJsrUECAlg/t3NbKHw=
+=======
+		OfEeQ12oBDN+ww6ekFoGVOt7dX4=
+>>>>>>> Stashed changes
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
 		<data>
@@ -202,11 +210,15 @@
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/isolate_snapshot_data</key>
 		<data>
-		J3OKveu3/udFiB8O6yi68rDVWOY=
+		gRDbYzMNgtJeT9rLZDdiOJ0RXMg=
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<data>
+<<<<<<< Updated upstream
 		dYqQMxcWX8/6BWWZbfp4V+t2Qjc=
+=======
+		pLUwo7ANpME8TDNpCx4+5iNlgZw=
+>>>>>>> Stashed changes
 		</data>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -498,7 +510,11 @@
 		</data>
 		<key>Frameworks/FirebaseSharedSwift.framework/FirebaseSharedSwift</key>
 		<data>
+<<<<<<< Updated upstream
 		tJCyopqixPP8Y/MuzAFpKbctwpk=
+=======
+		WuM1BI64otWB/rspFkeuEhb/Mmg=
+>>>>>>> Stashed changes
 		</data>
 		<key>Frameworks/FirebaseSharedSwift.framework/Info.plist</key>
 		<data>
@@ -522,7 +538,11 @@
 		</data>
 		<key>Frameworks/Flutter.framework/Flutter</key>
 		<data>
+<<<<<<< Updated upstream
 		U260AWTz1/OgK+rLKh7kiiBDH1Q=
+=======
+		4quGlub/IwnoqEYVFRSdPvyu8gU=
+>>>>>>> Stashed changes
 		</data>
 		<key>Frameworks/Flutter.framework/Headers/Flutter.h</key>
 		<data>
@@ -594,7 +614,11 @@
 		</data>
 		<key>Frameworks/Flutter.framework/Info.plist</key>
 		<data>
+<<<<<<< Updated upstream
 		+8GUTjT65EWKWGCvzzqxpU7xZPE=
+=======
+		Fn6CJcrmOY7R/UCpVvDdwVm3fwA=
+>>>>>>> Stashed changes
 		</data>
 		<key>Frameworks/Flutter.framework/Modules/module.modulemap</key>
 		<data>
@@ -606,7 +630,11 @@
 		</data>
 		<key>Frameworks/Flutter.framework/_CodeSignature/CodeResources</key>
 		<data>
+<<<<<<< Updated upstream
 		/h16tUmYkItwIKOuPLUhjeZQLOc=
+=======
+		DL4bsE6gOoPUAg6JuKJAbSJtTaY=
+>>>>>>> Stashed changes
 		</data>
 		<key>Frameworks/Flutter.framework/icudtl.dat</key>
 		<data>
@@ -1033,7 +1061,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			IbR+t0nNGPZ7fIAe0qTycXR2YRGNEBlddAOHG2FnOyg=
+=======
+			vgwKjQnsN6MBTDFT19U7/ew27hoP2g2KYbtY+V72qaA=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/Info.plist</key>
@@ -1047,7 +1079,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			FEZklnShooXn5vPAETdhjT4bhpQeJjYNMVP4x7USP5o=
+=======
+			L2P0Qj274HvWBxY2PhRlVIzm38s5DBhJL61QxNrV/o4=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/AssetManifest.bin</key>
@@ -1306,14 +1342,18 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ykVvWbyyNFkOsE/pzKdeOTPYsF+loL8qrTBq1TF84es=
+			Ut/uEhc6+hUf6S/IpyxQydpXSJV0AmyYEkKu13s4D6o=
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/kernel_blob.bin</key>
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			oKGKHA+asjOzn/o7FqPc440y3oItVpYQfnf0MUWc6bw=
+=======
+			z0zO+v9ltlBcprTxt72JlR09kS4s4z+KHwAUlq4Mx+o=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Frameworks/App.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
@@ -1824,7 +1864,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			Q2D/2+PtFTTzWchSP1fEV0OQsY39AZ5gnofp0Z4OCDc=
+=======
+			ZT7DEs3hOZrlDXpnvlK/NJtZDy62I6ECGoQcrqY52oE=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Frameworks/FirebaseSharedSwift.framework/Info.plist</key>
@@ -1866,7 +1910,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			k+3yWeoMKAHiR9wsvqmlnwSzps/8Mwf0nVjPd8JRiGA=
+=======
+			Lc7KV1yE5k27Y+TUIs3vims36oZVZ77QJp+19LMMnP0=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Frameworks/Flutter.framework/Headers/Flutter.h</key>
@@ -1992,7 +2040,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			qvdqOJyjv94imOYTWNDnDQE5YS+PsQoEVDZ/eyOLBsM=
+=======
+			v075kvkyPu8t6WRfJ+yP6wJjwWRMctNxq8i7q37e0U0=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Frameworks/Flutter.framework/Modules/module.modulemap</key>
@@ -2013,7 +2065,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< Updated upstream
 			Qs/vkLJuQ29Pp1KIPbf42CmNEU97zcwikXe/XR2CXRY=
+=======
+			9dHVR01bZ2BYcHmcZg2ujaVI5AEgH+42skJ864Cy8oY=
+>>>>>>> Stashed changes
 			</data>
 		</dict>
 		<key>Frameworks/Flutter.framework/icudtl.dat</key>

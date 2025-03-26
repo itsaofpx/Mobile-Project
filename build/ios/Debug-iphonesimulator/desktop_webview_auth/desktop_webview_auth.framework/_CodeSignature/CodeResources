@@ -10,7 +10,7 @@
 		</data>
 		<key>Headers/desktop_webview_auth-Swift.h</key>
 		<data>
-		tDWi62oYsYn1jeRRy2LpUQwX8xc=
+		1XbQ/5HYdxhzJy6NFjd86TVO0gE=
 		</data>
 		<key>Headers/desktop_webview_auth-umbrella.h</key>
 		<data>
@@ -18,15 +18,15 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		wYpNGJxTvn1KRNLtPRPDq/SbiTw=
+		LB2yhJ4lR1hu9RV/118Y/BSrqVU=
 		</data>
 		<key>Modules/desktop_webview_auth.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		mF3Eq2L+lgkK0hv142pazE0Nh5c=
+		1yOLaWJzvwVaWzo3FxbyL3+y/kE=
 		</data>
 		<key>Modules/desktop_webview_auth.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		uJJpDECW80ZztJa5I1V6jaIGYMc=
+		aMbVEnNt/9BQTpYTpjE/JWningQ=
 		</data>
 		<key>Modules/desktop_webview_auth.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -34,11 +34,11 @@
 		</data>
 		<key>Modules/desktop_webview_auth.swiftmodule/arm64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		eE2aT4C+OkVPOojAUAw4vtul0R8=
+		SGAxYwPi1K97wW90hgKqHcgLNM8=
 		</data>
 		<key>Modules/desktop_webview_auth.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		3RIszUZEiVSk214LSxYGqTMIj6Q=
+		aIzBjE9FSmgnOSeMPhC9PzZhlF4=
 		</data>
 		<key>Modules/desktop_webview_auth.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
@@ -46,11 +46,11 @@
 		</data>
 		<key>Modules/desktop_webview_auth.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
-		k9VkA+8yzdyBPxbGb8tjsmixam0=
+		jBeCm8zns2R/h0qbJeXoOGCNup8=
 		</data>
 		<key>Modules/desktop_webview_auth.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		rfL30BBb28sKDmQwTGKYZYt/3Kg=
+		YbDFE0hRkURMwWxaMERX/BNZG3A=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -70,7 +70,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			/HTfT8gdpB8KaxbjlyMSJsdR15dguX2o2AQP1bNKXGQ=
+			qeDoTUCopJ/U5emsUq0IWokt8xjg2Hfig/mKE/PWTRY=
 			</data>
 		</dict>
 		<key>Headers/desktop_webview_auth-umbrella.h</key>
@@ -84,14 +84,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			7ypxI+AxMMzXs9JXXZJHkTdvQFgx3fbtxjLbMOViw78=
+			esSJKjTzP/qbuWfQvEBYU0OwIge6B1YFkYgNi61StBc=
 			</data>
 		</dict>
 		<key>Modules/desktop_webview_auth.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			sUojekEkoOiGO/bsjZvWFCleU6kuLBm8mdO73BjdKPY=
+			Lf2YSfNCWzgCoDDc5rNyOPAaX/OibU72ciaE20NpS6k=
 			</data>
 		</dict>
 		<key>Modules/desktop_webview_auth.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
@@ -105,14 +105,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			/aXrBJlTQQctePy7FVgb3w7qkTb8WHs+GSuqXBcFXfk=
+			PMKEtzdlH7hJjF4T2gwicrZI6kGuQdl7iteuiGETKno=
 			</data>
 		</dict>
 		<key>Modules/desktop_webview_auth.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			3pgxnRvpKb5R2W6vSJioPWRan300vq8pWlLeBKzxwvY=
+			K8SSZoo4Nf/t4DvumFbKqf6EfDFBL06uXa7baVMOXVQ=
 			</data>
 		</dict>
 		<key>Modules/desktop_webview_auth.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
@@ -126,14 +126,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			ihTN6NoKsGA/V33ljmNT2QZA/tVV0K4TXixQg+m/RtA=
+			MLnmzYFwN4/ldksW4i/IAyZGL4EdWb62lD6Fpm3ElZE=
 			</data>
 		</dict>
 		<key>Modules/desktop_webview_auth.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			wVucUz65s57NlU8Kbk2au1lVHdniQ0c6sZSMGN+7aMk=
+			9rRe6ZEi8b8Usm3Y95fUsjC20cnrJxRIa0/CUvB2osE=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
