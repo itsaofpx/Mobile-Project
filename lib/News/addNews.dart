@@ -25,9 +25,7 @@ class _AddNewsPageState extends State<AddNewsPage> {
 
   Future<void> _addNews() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isLoading = true);
-
     try {
       await FirebaseFirestore.instance.collection('news').add({
         'news_title': _titleController.text.trim(),
@@ -35,23 +33,19 @@ class _AddNewsPageState extends State<AddNewsPage> {
         'news_url': _imageUrlController.text.trim(),
         'news_time': DateTime.now().toIso8601String(),
       });
-
       if (!mounted) return;
-      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('ข่าวถูกเพิ่มเรียบร้อยแล้ว'),
+          content: Text('News added successfully'),
           backgroundColor: Colors.green,
         ),
       );
-
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('เกิดข้อผิดพลาด: $e'),
+          content: Text('Error: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -62,14 +56,18 @@ class _AddNewsPageState extends State<AddNewsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final customNavyBlue = const Color(0xFF091442);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'เพิ่มข่าวใหม่',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          'Add New News',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
         elevation: 0,
+        backgroundColor: customNavyBlue,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -82,6 +80,7 @@ class _AddNewsPageState extends State<AddNewsPage> {
                 children: [
                   Card(
                     elevation: 4,
+                    color: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -90,28 +89,34 @@ class _AddNewsPageState extends State<AddNewsPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'รายละเอียดข่าว',
+                          Text(
+                            'News Details',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color: customNavyBlue,
                             ),
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
                             controller: _titleController,
                             decoration: InputDecoration(
-                              labelText: 'หัวข้อข่าว',
-                              prefixIcon: const Icon(Icons.title),
+                              labelText: 'News Title',
+                              prefixIcon: Icon(Icons.title, color: customNavyBlue),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: customNavyBlue),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: customNavyBlue, width: 2),
                               ),
                               filled: true,
                               fillColor: Colors.grey[50],
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'กรุณากรอกหัวข้อข่าว';
+                                return 'Please enter news title';
                               }
                               return null;
                             },
@@ -120,10 +125,15 @@ class _AddNewsPageState extends State<AddNewsPage> {
                           TextFormField(
                             controller: _contentController,
                             decoration: InputDecoration(
-                              labelText: 'เนื้อหาข่าว',
-                              prefixIcon: const Icon(Icons.article),
+                              labelText: 'News Content',
+                              prefixIcon: Icon(Icons.article, color: customNavyBlue),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: customNavyBlue),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: customNavyBlue, width: 2),
                               ),
                               filled: true,
                               fillColor: Colors.grey[50],
@@ -131,7 +141,7 @@ class _AddNewsPageState extends State<AddNewsPage> {
                             maxLines: 5,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'กรุณากรอกเนื้อหาข่าว';
+                                return 'Please enter news content';
                               }
                               return null;
                             },
@@ -140,20 +150,25 @@ class _AddNewsPageState extends State<AddNewsPage> {
                           TextFormField(
                             controller: _imageUrlController,
                             decoration: InputDecoration(
-                              labelText: 'URL รูปภาพ',
-                              prefixIcon: const Icon(Icons.image),
+                              labelText: 'Image URL',
+                              prefixIcon: Icon(Icons.image, color: customNavyBlue),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: customNavyBlue),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: customNavyBlue, width: 2),
                               ),
                               filled: true,
                               fillColor: Colors.grey[50],
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'กรุณากรอก URL รูปภาพ';
+                                return 'Please enter image URL';
                               }
                               if (!Uri.tryParse(value)!.isAbsolute) {
-                                return 'กรุณากรอก URL ที่ถูกต้อง';
+                                return 'Please enter a valid URL';
                               }
                               return null;
                             },
@@ -168,13 +183,14 @@ class _AddNewsPageState extends State<AddNewsPage> {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: _isLoading ? null : () => Navigator.pop(context),
-                          icon: const Icon(Icons.cancel),
-                          label: const Text('ยกเลิก'),
+                          icon: Icon(Icons.cancel, color: customNavyBlue),
+                          label: const Text('Cancel', style: TextStyle(color : Colors.black)),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
+                            side: BorderSide(color: customNavyBlue),
                           ),
                         ),
                       ),
@@ -182,7 +198,7 @@ class _AddNewsPageState extends State<AddNewsPage> {
                       Expanded(
                         child: ElevatedButton.icon(
                           onPressed: _isLoading ? null : _addNews,
-                          icon: _isLoading 
+                          icon: _isLoading
                               ? const SizedBox(
                                   width: 20,
                                   height: 20,
@@ -191,11 +207,11 @@ class _AddNewsPageState extends State<AddNewsPage> {
                                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                   ),
                                 )
-                              : const Icon(Icons.save),
-                          label: Text(_isLoading ? 'กำลังบันทึก...' : 'บันทึก'),
+                              : const Icon(Icons.save, color: Colors.white),
+                          label: Text(_isLoading ? 'Saving...' : 'Save'),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: Theme.of(context).primaryColor,
+                            backgroundColor: customNavyBlue,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),

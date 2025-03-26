@@ -28,7 +28,7 @@ class _StadiumListScreenState extends State<StadiumListScreen> {
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(56.0),
+          preferredSize: const Size.fromHeight(56.0),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(

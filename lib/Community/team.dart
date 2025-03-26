@@ -6,7 +6,7 @@ import 'package:layout/model/user_preferences.dart';
 
 class Team extends StatefulWidget {
   const Team({super.key});
-  
+
   @override
   State<Team> createState() => _TeamState();
 }
@@ -17,7 +17,7 @@ class _TeamState extends State<Team> {
   String? userImage;
   bool isLoading = true;
   bool isLoggedIn = false;
-  
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +31,7 @@ class _TeamState extends State<Team> {
     });
     await _loadUserData();
   }
-  
+
   Future<void> _loadUserData() async {
     try {
       final userId = await UserPreferences.getUserId();
@@ -43,8 +43,9 @@ class _TeamState extends State<Team> {
       }
       final userApi = UserApi();
       final userName = await userApi.getNameByUserID(userId);
-      const defaultImage = 'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg';
-      
+      const defaultImage =
+          'https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg';
+
       setState(() {
         userID = userId;
         username = userName ?? 'User';
@@ -60,108 +61,102 @@ class _TeamState extends State<Team> {
     }
   }
 
-
-void _showLoginRequiredDialog() {
-  showDialog(
-    context: context,
-    barrierDismissible: false, // Prevent dismissing by tapping outside
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0), // Rounded corners
-        ),
-        elevation: 8.0, // Add a shadow
-        backgroundColor: Colors.white,
-        child: Container(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min, // Important for wrapping content
-            crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch buttons
-            children: [
-              const SizedBox(height: 24.0),
-              const Icon(
-                Icons.lock_outline, // Use a lock icon
-                size: 48.0,
-                color: Color(0xFF091442), // A subtle color
-              ),
-              const SizedBox(height: 24.0),
-              const Text(
-                'Login Required',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16.0),
-              const Text(
-                'Please login to join community.',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.black54,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end, // Align buttons to the right
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16.0), // Add spacing between buttons
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.pushNamed(context, '/account');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF091442),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0, vertical: 12.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+  void _showLoginRequiredDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0), // Rounded corners
           ),
-        ),
-      );
-    },
-  );
-}
+          elevation: 8.0, // Add a shadow
+          backgroundColor: Colors.white,
+          child: Container(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Important for wrapping content
+              crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch buttons
+              children: [
+                const SizedBox(height: 24.0),
+                const Icon(
+                  Icons.lock_outline, // Use a lock icon
+                  size: 48.0,
+                  color: Color(0xFF091442), // A subtle color
+                ),
+                const SizedBox(height: 24.0),
+                const Text(
+                  'Login Required',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16.0),
+                const Text(
+                  'Please login to join community.',
+                  style: TextStyle(fontSize: 16.0, color: Colors.black54),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32.0),
+                Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.end, // Align buttons to the right
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.grey, fontSize: 16.0),
+                      ),
+                    ),
+                    const SizedBox(width: 16.0), // Add spacing between buttons
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.pushNamed(context, '/account');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF091442),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0,
+                          vertical: 12.0,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
-  
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Team Community"), elevation: 0,backgroundColor: Colors.white,),
+      appBar: AppBar(
+        title: const Text("Team Community"),
+        elevation: 0,
+        backgroundColor: Colors.white,
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: TeamsApi().getAllTeamsStream(),
         builder: (context, snapshot) {
@@ -228,97 +223,112 @@ class TeamCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white,
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
       child: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Container(
-                    width: 60.0,
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child: Image.network(
-                        teamImage,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.fitHeight,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.error, size: 60);
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      teamName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF2D3142),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16),
-            ElevatedButton(
-              onPressed: () {
-                if (isLoggedIn) {
-                  Navigator.pushNamed(
-                    context,
-                    '/postFeed',
-                    arguments: {
-                      'team_id': teamID,
-                      'team_name': teamName,
-                      'team_image': teamImage,
-                      'user_id': userID,
-                      'user_name': username,
-                      'user_image': userImage,
-                    },
-                  );
-                } else {
-                  onLoginRequired();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF091442),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                elevation: 2,
-              ),
-              child: const Text(
-                "Join",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 115, 115, 115).withOpacity(0.2),
+              spreadRadius: 3,
+              blurRadius: 10,
+              offset: const Offset(
+                0,
+                0,
+              ), // ตำแหน่งเงา (0, 0) ทำให้เงาออกทุกด้านเท่ากัน
             ),
           ],
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 60.0,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 3,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.network(
+                          teamImage,
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.fitHeight,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.error, size: 60);
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        teamName,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2D3142),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (isLoggedIn) {
+                    Navigator.pushNamed(
+                      context,
+                      '/postFeed',
+                      arguments: {
+                        'team_id': teamID,
+                        'team_name': teamName,
+                        'team_image': teamImage,
+                        'user_id': userID,
+                        'user_name': username,
+                        'user_image': userImage,
+                      },
+                    );
+                  } else {
+                    onLoginRequired();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF091442),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 2,
+                ),
+                child: const Text(
+                  "Join",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

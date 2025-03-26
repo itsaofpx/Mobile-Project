@@ -8,8 +8,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final email =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -24,14 +23,32 @@ class Home extends StatelessWidget {
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color(0xFF091442),
-                      Color.fromARGB(255, 40, 78, 107),
+                      Color.fromARGB(255, 5, 14, 50),
+                      Color.fromARGB(255, 22, 63, 94),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                 ),
               ),
+
+                Positioned(
+                top: 70, // ระยะห่างจากด้านบน
+                right: 30, // ระยะห่างจากด้านขวา
+                child: Container(
+                  width: 40, // ขนาดของวงกลม
+                  height: 40, // ขนาดของวงกลม
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle, // ทำให้ container เป็นวงกลม
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'assets/images/profile.png'), // เปลี่ยนเป็น path รูปที่คุณต้องการ
+                      fit: BoxFit.cover, // ทำให้รูปภาพครอบคลุมพื้นที่วงกลม
+                    ),
+                  ),
+                ),
+              ),
+              
 
               Positioned(
                 top: 70,
